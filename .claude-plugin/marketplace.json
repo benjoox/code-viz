@@ -1,0 +1,12 @@
+{
+  "name": "code-viz",
+  "owner": { "name": "benjoox" },
+  "description": "Interactive code and flow visualisation skills for Claude Code.",
+  "plugins": [
+    {
+      "name": "code-viz",
+      "source": "./",
+      "description": "Skills that turn code, docs and user journeys into interactive visual maps."
+    }
+  ]
+}

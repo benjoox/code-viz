@@ -1,0 +1,8 @@
+{
+  "name": "code-viz",
+  "description": "Skills that turn code, docs and user journeys into interactive visual maps.",
+  "author": { "name": "benjoox" },
+  "repository": "https://github.com/benjoox/code-viz",
+  "license": "MIT",
+  "keywords": ["visualization", "code-review", "architecture", "onboarding", "flow"]
+}
