@@ -1,7 +1,7 @@
 # flow.json schema
 
 The build rejects unknown kinds, severities, roles and ids, missing files, line ranges
-outside a file and excerpts over 40 lines. Paths are relative to `--root`.
+outside a file and excerpts over 40 lines. Paths are relative to `--root` and must stay inside it.
 
 ```jsonc
 {
@@ -19,7 +19,7 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root`.
         {
           "id": "entry", "label": "Entry", "kind": "function", "layer": "cli",
           "sub": "CLI entry",                  // optional second line; defaults to the file name
-          "file": "scripts/build.mjs", "lines": [15, 25],
+          "file": "scripts/build.mjs", "lines": [21, 34],
           "note": "Parses arguments and loads flow.json.",
           "drill": "excerpt"                   // optional: a view that opens from this node
         }
@@ -36,7 +36,7 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root`.
               "nodes": ["agent", "entry"], "edges": ["run"],
               "state": { "root": "--root or cwd" },                          // optional values that change
               "files": [
-                { "path": "scripts/build.mjs", "lines": [15, 19], "role": "reads",
+                { "path": "scripts/build.mjs", "lines": [21, 26], "role": "reads",
                   "note": "Paths in flow.json resolve against this root." }
               ]
             }
@@ -47,12 +47,12 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root`.
   },
   "issues": [
     {
-      "id": "outside-root", "severity": "question",   // bug | risk | smell | question
+      "id": "extra-args", "severity": "smell",        // bug | risk | smell | question
       "view": "main", "node": "entry",          // or "edge": "<edge id>"
-      "file": "scripts/build.mjs", "line": 18,
-      "title": "Excerpts can come from outside --root",
-      "detail": "Paths resolve against root with no containment check. Settle whether ../ is allowed.",
-      "fix": "Reject any path whose resolved location is outside root."
+      "file": "scripts/build.mjs", "line": 25,
+      "title": "Extra arguments are ignored silently",
+      "detail": "Only the first two positional arguments are read, so a mistyped flag is dropped without a warning.",
+      "fix": "Print the usage when more than two positional arguments remain."
     }
   ]
 }

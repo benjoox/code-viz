@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 // Builds one self-contained flow-map page from flow.json. Every excerpt is read from disk here,
 // so the page can only show code and doc lines that exist.
-import { readFileSync, writeFileSync, existsSync, statSync } from 'node:fs';
-import { dirname, resolve } from 'node:path';
+import { readFileSync, writeFileSync, existsSync, statSync, realpathSync } from 'node:fs';
+import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const USAGE = 'Usage: node build.mjs <flow.json> <out.html> [--root <repo-root>]';
@@ -10,7 +10,13 @@ const MAX_EXCERPT = 40;
 const KINDS = new Set(['user', 'ui', 'page', 'component', 'hook', 'api', 'route', 'service', 'function', 'job', 'event', 'auth', 'state', 'external', 'ai', 'db', 'table', 'cache', 'bucket', 'queue', 'search', 'vector', 'file', 'doc', 'folder']);
 const SEVERITIES = new Set(['bug', 'risk', 'smell', 'question']);
 const ROLES = new Set(['reads', 'writes', 'calls', 'defines']);
-const SECRET = /((?:api[_-]?key|secret|token|password|passwd|private[_-]?key|service[_-]?role)[\w-]*["']?\s*[:=]\s*)(["']?)[^"'\s,;]{6,}\2/gi;
+const SECRETS = [
+  [/((?:api[_-]?key|secret|token|password|passwd|private[_-]?key|service[_-]?role)[\w-]*["']?\s*[:=]\s*)(["']?)[^"'\s,;]{6,}\2/gi, '$1[redacted]'],
+  [/\b((?:Bearer|Basic)\s+)[\w.~+/=-]{8,}/g, '$1[redacted]'],
+  [/([?&](?:key|sig|signature|access_token)=)[^&#\s"']{6,}/gi, '$1[redacted]'],
+  [/\b(?:sk|pk|rk)[-_][\w-]{16,}|\bgh[pousr]_\w{20,}|\bgithub_pat_\w{20,}|\bAIza[\w-]{30,}|\bxox[abprs]-[\w-]{10,}|\bAKIA[0-9A-Z]{16}\b|\beyJ[\w-]{8,}\.[\w-]{8,}\.[\w-]{8,}/g, '[redacted]'],
+];
+const redact = line => SECRETS.reduce((l, [re, to]) => l.replace(re, to), line);
 
 const args = process.argv.slice(2);
 const rootIx = args.indexOf('--root');
@@ -34,20 +40,27 @@ function readLines(path) {
   fileCache.set(path, lines);
   return lines;
 }
+/** Resolves symlinks on both sides, so a link inside the project cannot reach outside it. */
+function inRoot(path) {
+  const rel = relative(realpathSync(root), realpathSync(resolve(root, path)));
+  return rel !== '..' && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
+}
 function excerpt(where, path, lines) {
   if (path.endsWith('/')) {
     if (!existsSync(resolve(root, path))) fail(`${where}: folder ${path} does not exist`);
+    else if (!inRoot(path)) fail(`${where}: ${path} is outside ${root}`);
     if (lines) fail(`${where}: a folder takes no line range`);
     return undefined;
   }
   const all = readLines(path);
   if (!all) { fail(`${where}: file ${path} does not exist under ${root}`); return undefined; }
+  if (!inRoot(path)) { fail(`${where}: ${path} is outside ${root}`); return undefined; }
   if (!lines) return undefined;
   const [a, b] = lines;
   if (!Number.isInteger(a) || !Number.isInteger(b) || a < 1 || b < a) { fail(`${where}: bad line range ${JSON.stringify(lines)}`); return undefined; }
   if (b > all.length) { fail(`${where}: ${path} has ${all.length} lines, range ends at ${b}`); return undefined; }
   if (b - a + 1 > MAX_EXCERPT) { fail(`${where}: excerpt of ${b - a + 1} lines exceeds ${MAX_EXCERPT}; narrow it`); return undefined; }
-  return all.slice(a - 1, b).map(l => l.replace(SECRET, '$1[redacted]'));
+  return all.slice(a - 1, b).map(redact);
 }
 
 if (typeof flow.title !== 'string' || !flow.title) fail('title is required');
@@ -107,9 +120,10 @@ for (const i of flow.issues) {
   if (!i.file) { fail(`${w}: file is required`); continue; }
   const all = readLines(i.file);
   if (!all) { fail(`${w}: file ${i.file} does not exist`); continue; }
+  if (!inRoot(i.file)) { fail(`${w}: ${i.file} is outside ${root}`); continue; }
   if (!Number.isInteger(i.line) || i.line < 1 || i.line > all.length) { fail(`${w}: line ${i.line} is outside ${i.file}`); continue; }
   i.from = Math.max(1, i.line - 2);
-  i.excerpt = all.slice(i.from - 1, Math.min(all.length, i.line + 2)).map(l => l.replace(SECRET, '$1[redacted]'));
+  i.excerpt = all.slice(i.from - 1, Math.min(all.length, i.line + 2)).map(redact);
 }
 
 if (errors.length) {

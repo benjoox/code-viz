@@ -50,8 +50,10 @@ reads your code and never edits it.
 
 - The agent writes only the model. The build reads every excerpt from disk, so the page
   can only show lines that exist.
-- The build rejects unknown node ids, missing files, out-of-range lines and excerpts over
-  40 lines, and redacts values assigned to keys that look like secrets.
+- The build rejects unknown ids, missing files, paths outside the project (symlinks
+  included), out-of-range lines and excerpts over 40 lines.
+- Excerpts are redacted before they reach the page: secret-looking assignments, Bearer and
+  Basic credentials, `key=` query values and common API token shapes.
 - Issues carry a file, a line, a one-sentence detail and a one-line fix. Anything the
   agent could not verify is marked as a question.
 
