@@ -73,11 +73,13 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
   if (!v.title) fail(`${at}: title is required`);
   const layers = new Set((v.layers ?? []).map(l => l.id));
   if (!layers.size) fail(`${at}: needs at least one layer`);
+  for (const l of v.layers ?? []) if (!l.label) fail(`${at}.layers.${l.id}: label is required`);
   const nodes = new Set();
   for (const n of v.nodes ?? []) {
     const w = `${at}.nodes.${n.id}`;
     if (nodes.has(n.id)) fail(`${w}: duplicate id`);
     nodes.add(n.id);
+    if (!n.label) fail(`${w}: label is required`);
     if (!layers.has(n.layer)) fail(`${w}: unknown layer "${n.layer}"`);
     if (!KINDS.has(n.kind)) fail(`${w}: unknown kind "${n.kind}"`);
     if (n.drill && !flow.views[n.drill]) fail(`${w}: drill target "${n.drill}" is not a view`);

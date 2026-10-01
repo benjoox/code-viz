@@ -15,10 +15,10 @@
       "nodes": [
         { "id": "agent", "label": "Agent", "kind": "user", "layer": "caller", "sub": "runs the build" },
         { "id": "entry", "label": "Entry", "kind": "function", "layer": "cli", "file": "scripts/build.mjs", "lines": [21, 34], "note": "Parses arguments, resolves --root (default: the current folder) and loads flow.json; an unreadable flow exits 1." },
-        { "id": "validate", "label": "Flow checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [71, 110], "note": "Checks every view's layers, nodes, edges and steps, and cuts an excerpt for each file reference." },
-        { "id": "issues", "label": "Issue checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [112, 127], "note": "Checks each issue's severity, target and line, and attaches the two lines either side." },
-        { "id": "problems", "label": "Problem report", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [129, 132], "note": "Prints every collected problem at once and exits 1 without writing a page." },
-        { "id": "render", "label": "Page assembly", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [134, 142], "note": "Injects the title, icon sprite and flow data into the template." },
+        { "id": "validate", "label": "Flow checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [73, 111], "note": "Checks every view's layers, nodes, edges and steps, labels included, and cuts an excerpt for each file reference." },
+        { "id": "issues", "label": "Issue checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [114, 129], "note": "Checks each issue's severity, target and line, and attaches the two lines either side." },
+        { "id": "problems", "label": "Problem report", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [131, 134], "note": "Prints every collected problem at once and exits 1 without writing a page." },
+        { "id": "render", "label": "Page assembly", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [136, 144], "note": "Injects the title, icon sprite and flow data into the template." },
         { "id": "excerpt", "label": "excerpt()", "kind": "function", "layer": "read", "file": "scripts/build.mjs", "lines": [48, 64], "drill": "excerpt", "note": "Keeps a path inside the project, checks its line range and returns the redacted lines." },
         { "id": "readLines", "label": "readLines()", "kind": "cache", "layer": "read", "file": "scripts/build.mjs", "lines": [36, 42], "note": "Reads each file once and caches its lines, or null when it is missing." },
         { "id": "flow", "label": "flow.json", "kind": "file", "layer": "disk", "sub": "written by the agent" },
@@ -51,8 +51,8 @@
               "files": [{ "path": "scripts/build.mjs", "lines": [28, 31], "role": "reads" }] },
             { "say": "Every node, edge and step is checked, and each file reference is cut into an excerpt.", "nodes": ["entry", "validate", "excerpt"], "edges": ["check", "cut"], "state": { "problems": "collecting" },
               "files": [
-                { "path": "scripts/build.mjs", "lines": [77, 85], "role": "calls", "note": "Node ids, layers, kinds and drill targets." },
-                { "path": "scripts/build.mjs", "lines": [97, 107], "role": "calls", "note": "Step node and edge ids, file roles and excerpts." }
+                { "path": "scripts/build.mjs", "lines": [78, 87], "role": "calls", "note": "Node ids, layers, kinds and drill targets." },
+                { "path": "scripts/build.mjs", "lines": [99, 109], "role": "calls", "note": "Step node and edge ids, file roles and excerpts." }
               ] },
             { "say": "excerpt() reads the file from the project root, refuses paths that escape it, checks the range and redacts secrets.", "nodes": ["excerpt", "readLines", "sources"], "edges": ["lines", "disk"],
               "files": [
@@ -60,9 +60,9 @@
                 { "path": "scripts/build.mjs", "lines": [36, 42], "role": "reads" }
               ] },
             { "say": "Each issue is checked against its view and file and given the lines around it.", "nodes": ["entry", "issues", "readLines"], "edges": ["checkIssues", "issueLines"],
-              "files": [{ "path": "scripts/build.mjs", "lines": [112, 127], "role": "defines" }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [114, 129], "role": "defines" }] },
             { "say": "With no problems, the template and icon sprite are read and the page is written.", "nodes": ["entry", "render", "assets", "page"], "edges": ["assemble", "template", "write"], "state": { "problems": "0", "page": "written" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [134, 142], "role": "writes" }] }
+              "files": [{ "path": "scripts/build.mjs", "lines": [136, 144], "role": "writes" }] }
           ]
         },
         {
@@ -70,11 +70,11 @@
           "steps": [
             { "say": "A step names a node that does not exist, or an excerpt runs past 40 lines.", "nodes": ["validate", "excerpt"], "edges": ["cut"], "state": { "problems": "1 or more" },
               "files": [
-                { "path": "scripts/build.mjs", "lines": [100, 101], "role": "reads" },
+                { "path": "scripts/build.mjs", "lines": [102, 103], "role": "reads" },
                 { "path": "scripts/build.mjs", "lines": [62, 62], "role": "reads" }
               ] },
             { "say": "Every problem is printed at once and the build exits 1 without writing a page.", "nodes": ["entry", "problems", "agent"], "edges": ["fail", "exit1"], "state": { "page": "not written", "exitCode": "1" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [129, 132], "role": "writes", "note": "Writes to stderr only." }] }
+              "files": [{ "path": "scripts/build.mjs", "lines": [131, 134], "role": "writes", "note": "Writes to stderr only." }] }
           ]
         }
       ]
@@ -119,11 +119,18 @@
   },
   "issues": [
     {
-      "id": "missing-labels", "severity": "bug", "view": "main", "node": "validate",
-      "file": "scripts/build.mjs", "line": 74,
-      "title": "Unlabelled layers and nodes pass, then blank the page",
-      "detail": "Only ids are checked, so a layer or node without a label builds cleanly and the page script throws on label.toUpperCase() or trunc(label), leaving an empty canvas.",
-      "fix": "Fail the build when a layer or node has no label."
+      "id": "missing-out-dir", "severity": "risk", "view": "main", "edge": "write",
+      "file": "scripts/build.mjs", "line": 144,
+      "title": "A missing output folder crashes the build",
+      "detail": "writeFileSync runs unguarded, so an output path in a folder that does not exist exits with an ENOENT stack trace after every check has passed.",
+      "fix": "Create the output folder first, or report the error as a problem line."
+    },
+    {
+      "id": "extra-args", "severity": "smell", "view": "main", "node": "entry",
+      "file": "scripts/build.mjs", "line": 25,
+      "title": "Extra arguments are ignored silently",
+      "detail": "Only the first two positional arguments are read, so a mistyped flag is dropped without a warning.",
+      "fix": "Print the usage when more than two positional arguments remain."
     }
   ]
 }
