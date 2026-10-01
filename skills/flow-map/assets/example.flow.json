@@ -14,13 +14,13 @@
       ],
       "nodes": [
         { "id": "agent", "label": "Agent", "kind": "user", "layer": "caller", "sub": "runs the build" },
-        { "id": "entry", "label": "Entry", "kind": "function", "layer": "cli", "file": "scripts/build.mjs", "lines": [21, 34], "note": "Parses arguments, resolves --root (default: the current folder) and loads flow.json; an unreadable flow exits 1." },
-        { "id": "validate", "label": "Flow checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [73, 111], "note": "Checks every view's layers, nodes, edges and steps, labels included, and cuts an excerpt for each file reference." },
-        { "id": "issues", "label": "Issue checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [114, 129], "note": "Checks each issue's severity, target and line, and attaches the two lines either side." },
-        { "id": "problems", "label": "Problem report", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [131, 134], "note": "Prints every collected problem at once and exits 1 without writing a page." },
-        { "id": "render", "label": "Page assembly", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [136, 144], "note": "Injects the title, icon sprite and flow data into the template." },
-        { "id": "excerpt", "label": "excerpt()", "kind": "function", "layer": "read", "file": "scripts/build.mjs", "lines": [48, 64], "drill": "excerpt", "note": "Keeps a path inside the project, checks its line range and returns the redacted lines." },
-        { "id": "readLines", "label": "readLines()", "kind": "cache", "layer": "read", "file": "scripts/build.mjs", "lines": [36, 42], "note": "Reads each file once and caches its lines, or null when it is missing." },
+        { "id": "entry", "label": "Entry", "kind": "function", "layer": "cli", "file": "scripts/build.mjs", "lines": [21, 35], "note": "Takes exactly two paths plus an optional --root (default: the current folder) and loads flow.json; an unreadable flow exits 1." },
+        { "id": "validate", "label": "Flow checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [74, 112], "note": "Checks every view's layers, nodes, edges and steps, labels included, and cuts an excerpt for each file reference." },
+        { "id": "issues", "label": "Issue checks", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [115, 130], "note": "Checks each issue's severity, target and line, and attaches the two lines either side." },
+        { "id": "problems", "label": "Problem report", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [132, 135], "note": "Prints every collected problem at once and exits 1 without writing a page." },
+        { "id": "render", "label": "Page assembly", "kind": "function", "layer": "stage", "file": "scripts/build.mjs", "lines": [137, 148], "note": "Injects the title, icon sprite and flow data into the template, then writes the page, creating its folder." },
+        { "id": "excerpt", "label": "excerpt()", "kind": "function", "layer": "read", "file": "scripts/build.mjs", "lines": [49, 65], "drill": "excerpt", "note": "Keeps a path inside the project, checks its line range and returns the redacted lines." },
+        { "id": "readLines", "label": "readLines()", "kind": "cache", "layer": "read", "file": "scripts/build.mjs", "lines": [37, 43], "note": "Reads each file once and caches its lines, or null when it is missing." },
         { "id": "flow", "label": "flow.json", "kind": "file", "layer": "disk", "sub": "written by the agent" },
         { "id": "sources", "label": "Project files", "kind": "folder", "layer": "disk", "sub": "under --root" },
         { "id": "assets", "label": "assets/", "kind": "folder", "layer": "disk", "sub": "template, icons" },
@@ -46,23 +46,23 @@
           "id": "build", "title": "Build a page", "kind": "data",
           "steps": [
             { "say": "The agent runs build.mjs with its flow.json, an output path and the project root.", "nodes": ["agent", "entry"], "edges": ["run"], "state": { "root": "--root or cwd" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [21, 26], "role": "reads", "note": "Paths in flow.json resolve against this root." }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [21, 27], "role": "reads", "note": "Paths in flow.json resolve against this root." }] },
             { "say": "The entry reads and parses flow.json.", "nodes": ["entry", "flow"], "edges": ["load"], "state": { "flow": "parsed" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [28, 31], "role": "reads" }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [29, 32], "role": "reads" }] },
             { "say": "Every node, edge and step is checked, and each file reference is cut into an excerpt.", "nodes": ["entry", "validate", "excerpt"], "edges": ["check", "cut"], "state": { "problems": "collecting" },
               "files": [
-                { "path": "scripts/build.mjs", "lines": [78, 87], "role": "calls", "note": "Node ids, layers, kinds and drill targets." },
-                { "path": "scripts/build.mjs", "lines": [99, 109], "role": "calls", "note": "Step node and edge ids, file roles and excerpts." }
+                { "path": "scripts/build.mjs", "lines": [79, 88], "role": "calls", "note": "Node ids, layers, kinds and drill targets." },
+                { "path": "scripts/build.mjs", "lines": [100, 110], "role": "calls", "note": "Step node and edge ids, file roles and excerpts." }
               ] },
             { "say": "excerpt() reads the file from the project root, refuses paths that escape it, checks the range and redacts secrets.", "nodes": ["excerpt", "readLines", "sources"], "edges": ["lines", "disk"],
               "files": [
-                { "path": "scripts/build.mjs", "lines": [48, 64], "role": "defines" },
-                { "path": "scripts/build.mjs", "lines": [36, 42], "role": "reads" }
+                { "path": "scripts/build.mjs", "lines": [49, 65], "role": "defines" },
+                { "path": "scripts/build.mjs", "lines": [37, 43], "role": "reads" }
               ] },
             { "say": "Each issue is checked against its view and file and given the lines around it.", "nodes": ["entry", "issues", "readLines"], "edges": ["checkIssues", "issueLines"],
-              "files": [{ "path": "scripts/build.mjs", "lines": [114, 129], "role": "defines" }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [115, 130], "role": "defines" }] },
             { "say": "With no problems, the template and icon sprite are read and the page is written.", "nodes": ["entry", "render", "assets", "page"], "edges": ["assemble", "template", "write"], "state": { "problems": "0", "page": "written" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [136, 144], "role": "writes" }] }
+              "files": [{ "path": "scripts/build.mjs", "lines": [137, 148], "role": "writes" }] }
           ]
         },
         {
@@ -70,11 +70,11 @@
           "steps": [
             { "say": "A step names a node that does not exist, or an excerpt runs past 40 lines.", "nodes": ["validate", "excerpt"], "edges": ["cut"], "state": { "problems": "1 or more" },
               "files": [
-                { "path": "scripts/build.mjs", "lines": [102, 103], "role": "reads" },
-                { "path": "scripts/build.mjs", "lines": [62, 62], "role": "reads" }
+                { "path": "scripts/build.mjs", "lines": [103, 104], "role": "reads" },
+                { "path": "scripts/build.mjs", "lines": [63, 63], "role": "reads" }
               ] },
             { "say": "Every problem is printed at once and the build exits 1 without writing a page.", "nodes": ["entry", "problems", "agent"], "edges": ["fail", "exit1"], "state": { "page": "not written", "exitCode": "1" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [131, 134], "role": "writes", "note": "Writes to stderr only." }] }
+              "files": [{ "path": "scripts/build.mjs", "lines": [132, 135], "role": "writes", "note": "Writes to stderr only." }] }
           ]
         }
       ]
@@ -88,8 +88,8 @@
       ],
       "nodes": [
         { "id": "ref", "label": "path + lines", "kind": "state", "layer": "input", "sub": "from flow.json" },
-        { "id": "folder", "label": "Folder check", "kind": "function", "layer": "checks", "file": "scripts/build.mjs", "lines": [49, 53], "note": "A path ending in / must exist inside the project and takes no line range." },
-        { "id": "range", "label": "Range checks", "kind": "function", "layer": "checks", "file": "scripts/build.mjs", "lines": [55, 62], "note": "The file must exist inside the project, symlinks resolved, and the range must be whole, in bounds and 40 lines or fewer." },
+        { "id": "folder", "label": "Folder check", "kind": "function", "layer": "checks", "file": "scripts/build.mjs", "lines": [50, 54], "note": "A path ending in / must exist inside the project and takes no line range." },
+        { "id": "range", "label": "Range checks", "kind": "function", "layer": "checks", "file": "scripts/build.mjs", "lines": [56, 63], "note": "The file must exist inside the project, symlinks resolved, and the range must be whole, in bounds and 40 lines or fewer." },
         { "id": "redact", "label": "Redaction", "kind": "auth", "layer": "output", "file": "scripts/build.mjs", "lines": [13, 19], "note": "Masks secret-looking assignments, Bearer and Basic credentials, key= query values and common token shapes." },
         { "id": "lines", "label": "Excerpt lines", "kind": "state", "layer": "output", "sub": "shown on the page" }
       ],
@@ -104,12 +104,12 @@
           "id": "cut", "title": "Cut one excerpt", "kind": "system",
           "steps": [
             { "say": "A folder reference only has to exist; it never carries lines.", "nodes": ["ref", "folder"], "edges": ["isFolder"],
-              "files": [{ "path": "scripts/build.mjs", "lines": [49, 53], "role": "defines" }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [50, 54], "role": "defines" }] },
             { "say": "A file reference must resolve inside the project, then its range is checked against the file's length and the 40-line cap.", "nodes": ["ref", "range"], "edges": ["isFile"], "state": { "cap": "40 lines" },
-              "files": [{ "path": "scripts/build.mjs", "lines": [55, 62], "role": "defines" }] },
+              "files": [{ "path": "scripts/build.mjs", "lines": [56, 63], "role": "defines" }] },
             { "say": "The slice is redacted line by line before it reaches the page.", "nodes": ["range", "redact", "lines"], "edges": ["slice", "out"], "state": { "secrets": "redacted" },
               "files": [
-                { "path": "scripts/build.mjs", "lines": [63, 63], "role": "defines" },
+                { "path": "scripts/build.mjs", "lines": [64, 64], "role": "defines" },
                 { "path": "scripts/build.mjs", "lines": [13, 19], "role": "defines" }
               ] }
           ]
@@ -119,18 +119,18 @@
   },
   "issues": [
     {
-      "id": "missing-out-dir", "severity": "risk", "view": "main", "edge": "write",
-      "file": "scripts/build.mjs", "line": 144,
-      "title": "A missing output folder crashes the build",
-      "detail": "writeFileSync runs unguarded, so an output path in a folder that does not exist exits with an ENOENT stack trace after every check has passed.",
-      "fix": "Create the output folder first, or report the error as a problem line."
+      "id": "file-without-path", "severity": "risk", "view": "main", "node": "validate",
+      "file": "scripts/build.mjs", "line": 108,
+      "title": "A step file without a path crashes the build",
+      "detail": "excerpt() calls path.endsWith on undefined, so a files entry missing its path exits with a TypeError instead of a problem line.",
+      "fix": "Fail the step when a file entry has no path."
     },
     {
-      "id": "extra-args", "severity": "smell", "view": "main", "node": "entry",
-      "file": "scripts/build.mjs", "line": 25,
-      "title": "Extra arguments are ignored silently",
-      "detail": "Only the first two positional arguments are read, so a mistyped flag is dropped without a warning.",
-      "fix": "Print the usage when more than two positional arguments remain."
+      "id": "scenario-title", "severity": "smell", "view": "main", "node": "validate",
+      "file": "scripts/build.mjs", "line": 99,
+      "title": "Scenario titles are not required",
+      "detail": "A scenario without a title builds cleanly and appears as \"undefined\" in the page's flow picker.",
+      "fix": "Fail the build when a scenario has no title."
     }
   ]
 }

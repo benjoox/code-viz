@@ -19,10 +19,12 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root` and mu
         {
           "id": "entry", "label": "Entry", "kind": "function", "layer": "cli",
           "sub": "CLI entry",                  // optional second line; defaults to the file name
-          "file": "scripts/build.mjs", "lines": [21, 34],
-          "note": "Parses arguments and loads flow.json.",
+          "file": "scripts/build.mjs", "lines": [21, 35],
+          "note": "Takes two paths and an optional --root, then loads flow.json.",
           "drill": "excerpt"                   // optional: a view that opens from this node
-        }
+        },
+        { "id": "validate", "label": "Flow checks", "kind": "function", "layer": "cli",
+          "file": "scripts/build.mjs", "lines": [74, 112] }
       ],
       "edges": [
         { "id": "run", "from": "agent", "to": "entry", "label": "node build.mjs", "data": "flow, out, --root" }
@@ -36,7 +38,7 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root` and mu
               "nodes": ["agent", "entry"], "edges": ["run"],
               "state": { "root": "--root or cwd" },                          // optional values that change
               "files": [
-                { "path": "scripts/build.mjs", "lines": [21, 26], "role": "reads",
+                { "path": "scripts/build.mjs", "lines": [21, 27], "role": "reads",
                   "note": "Paths in flow.json resolve against this root." }
               ]
             }
@@ -47,12 +49,12 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root` and mu
   },
   "issues": [
     {
-      "id": "extra-args", "severity": "smell",        // bug | risk | smell | question
-      "view": "main", "node": "entry",          // or "edge": "<edge id>"
-      "file": "scripts/build.mjs", "line": 25,
-      "title": "Extra arguments are ignored silently",
-      "detail": "Only the first two positional arguments are read, so a mistyped flag is dropped without a warning.",
-      "fix": "Print the usage when more than two positional arguments remain."
+      "id": "file-without-path", "severity": "risk",  // bug | risk | smell | question
+      "view": "main", "node": "validate",       // or "edge": "<edge id>"
+      "file": "scripts/build.mjs", "line": 108,
+      "title": "A step file without a path crashes the build",
+      "detail": "excerpt() calls path.endsWith on undefined, so the build exits with a TypeError.",
+      "fix": "Fail the step when a file entry has no path."
     }
   ]
 }

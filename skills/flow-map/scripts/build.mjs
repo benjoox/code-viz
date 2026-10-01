@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Builds one self-contained flow-map page from flow.json. Every excerpt is read from disk here,
 // so the page can only show code and doc lines that exist.
-import { readFileSync, writeFileSync, existsSync, statSync, realpathSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, statSync, realpathSync, mkdirSync } from 'node:fs';
 import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -22,8 +22,9 @@ const args = process.argv.slice(2);
 const rootIx = args.indexOf('--root');
 if (rootIx >= 0 && !args[rootIx + 1]) { console.error(USAGE); process.exit(2); }
 const root = resolve(rootIx >= 0 ? args[rootIx + 1] : process.cwd());
-const [flowPath, outPath] = rootIx >= 0 ? args.filter((_, i) => i !== rootIx && i !== rootIx + 1) : args;
-if (!flowPath || !outPath) { console.error(USAGE); process.exit(2); }
+const positional = rootIx >= 0 ? args.filter((_, i) => i !== rootIx && i !== rootIx + 1) : args;
+if (positional.length !== 2) { console.error(USAGE); process.exit(2); }
+const [flowPath, outPath] = positional;
 
 const here = dirname(fileURLToPath(import.meta.url));
 let flow;
@@ -141,7 +142,10 @@ const html = template
   .replace('__TITLE__', () => esc(flow.title))
   .replace('<!--__SPRITE__-->', () => sprite)
   .replace('/*__FLOW_DATA__*/null', () => JSON.stringify(flow).replace(/</g, '\\u003c'));
-writeFileSync(outPath, html);
+try {
+  mkdirSync(dirname(resolve(outPath)), { recursive: true });
+  writeFileSync(outPath, html);
+} catch (e) { console.error(`flow-map: cannot write ${outPath}: ${e.message}`); process.exit(1); }
 
 const views = Object.values(flow.views);
 const count = sev => flow.issues.filter(i => i.severity === sev).length;
