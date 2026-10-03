@@ -72,6 +72,16 @@ node skills/flow-map/scripts/build.mjs skills/flow-map/assets/example.flow.json 
 
 Open `example.html` in a browser.
 
+## Development documentation
+
+See the [documentation guide](docs/README.md), [roadmap](docs/roadmap.md),
+[backlog](docs/backlog.jsonld) and [decision log](docs/decision-log.md).
+The next proposed initiative is [asking Codex questions inside a flow map](docs/planning/flow-map-codex-questions-plan.md).
+
+Repository maintainers can use `/doc-this` and `/ticket-triage` in Claude Code,
+or `$doc-this` and `$ticket-triage` in Codex. These repo-local workflows are separate
+from the installed public flow-map skill. See [AGENTS.md](AGENTS.md).
+
 ## License
 
 [MIT](LICENSE)
