@@ -1,0 +1,12 @@
+[
+  {
+    "id": "CV-001",
+    "title": "Short imperative title",
+    "type": "feature",
+    "status": "open",
+    "priority": "medium",
+    "blocks": [],
+    "area": "flow-map",
+    "description": "Describe the problem, scope, evidence, acceptance criteria and links to relevant plans or tasks. This file is a template; live work belongs in docs/backlog.jsonld."
+  }
+]

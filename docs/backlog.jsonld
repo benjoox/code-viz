@@ -1,0 +1,32 @@
+[
+  {
+    "id": "CV-001",
+    "title": "Verify local Codex transport and thread ownership",
+    "type": "chore",
+    "status": "open",
+    "priority": "medium",
+    "blocks": ["CV-002", "CV-003"],
+    "area": "codex-connection",
+    "description": "Establish the runtime contract needed to ask questions from generated flow-map HTML. Official Codex App Server docs expose thread/start, thread/resume, turn/start and event streaming, but access to an arbitrary existing host conversation has not been verified. Scope: prototype an authenticated local connection, dedicated-thread creation/resume, workspace binding, approvals/denials, interruption, reconnect and process cleanup; separately assess existing host-session ownership and compatibility. Acceptance: record tested CLI versions, reproducible commands and observed outcomes, select the supported transport, and update docs/planning/flow-map-codex-questions-plan.md before implementation. Task: docs/planning/tasks/001-codex-connection-spike.md. This planning PR does not complete the spike."
+  },
+  {
+    "id": "CV-002",
+    "title": "Ask Codex from a selected flow-map node",
+    "type": "feature",
+    "status": "open",
+    "priority": "medium",
+    "blocks": ["CV-003"],
+    "area": "flow-map-questions",
+    "description": "Let readers ask questions beside a selected node, step or issue and receive streamed Codex answers in a persistent dedicated map conversation. Depends on CV-001. Scope: optional local service, explicit question submission with selected map context and source references, visible repository/thread destination, streamed answers/tool status, approval handling, follow-ups after reload, and clear failure/recovery states. Acceptance: demonstrate context reaching the intended thread, a streamed answer and follow-up, permission denial and cancellation, authenticated origin/workspace boundaries, and the standalone viewer working without the service; document setup. Plan: docs/planning/flow-map-codex-questions-plan.md. Task: docs/planning/tasks/002-contextual-codex-questions.md. Keep connection credentials out of generated HTML."
+  },
+  {
+    "id": "CV-003",
+    "title": "Route map questions to a selected existing Codex thread",
+    "type": "feature",
+    "status": "open",
+    "priority": "medium",
+    "blocks": [],
+    "area": "codex-connection",
+    "description": "Support the user's choice to continue an existing Codex conversation from the map when its owning runtime exposes a compatible interface. Depends on CV-001 and CV-002. Scope: explicit thread/workspace selection, verified attach/resume behavior, correct response routing and busy-turn handling, and clear unavailable-session feedback. Acceptance: prove a question and reply are appended to the selected original thread with history and permissions preserved; test busy, missing and inaccessible destinations. Offer a dedicated conversation explicitly when attachment is unsupported, never silently create a new thread or claim same-session continuity. Plan: docs/planning/flow-map-codex-questions-plan.md. Task: docs/planning/tasks/003-existing-thread-routing.md. Keep this ticket open if existing-session access remains unverified or unsupported unless its scope is explicitly revised."
+  }
+]

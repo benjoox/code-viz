@@ -101,6 +101,16 @@ suggest a feature. Run `npm run check` and `npm run demo` to validate a local ch
 See the [changelog](CHANGELOG.md) and [releases](https://github.com/benjoox/code-viz/releases)
 for versioned updates. This is an early project; the schema may evolve before 1.0.
 
+## Development documentation
+
+See the [documentation guide](docs/README.md), [roadmap](docs/roadmap.md),
+[backlog](docs/backlog.jsonld) and [decision log](docs/decision-log.md).
+The next proposed initiative is [asking Codex questions inside a flow map](docs/planning/flow-map-codex-questions-plan.md).
+
+Repository maintainers can use `/doc-this` and `/ticket-triage` in Claude Code,
+or `$doc-this` and `$ticket-triage` in Codex. These repo-local workflows are separate
+from the installed public flow-map skill. See [AGENTS.md](AGENTS.md).
+
 ## License
 
 [MIT](LICENSE)
