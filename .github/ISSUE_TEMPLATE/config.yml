@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Private security report
+    url: https://github.com/benjoox/code-viz/security/advisories/new
+    about: Report vulnerabilities privately, with sanitized reproduction details.
+  - name: Support and compatibility
+    url: https://github.com/benjoox/code-viz/blob/main/SUPPORT.md
+    about: Check support expectations and verification notes.

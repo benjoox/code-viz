@@ -1,0 +1,14 @@
+{
+  "name": "code-viz",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Agent skills for interactive code and process maps",
+  "license": "MIT",
+  "type": "module",
+  "engines": { "node": ">=22" },
+  "scripts": {
+    "test": "node --test",
+    "check": "node scripts/check.mjs && node --test",
+    "demo": "node skills/flow-map/scripts/build.mjs skills/flow-map/assets/example.flow.json docs/demo/index.html --root skills/flow-map"
+  }
+}
