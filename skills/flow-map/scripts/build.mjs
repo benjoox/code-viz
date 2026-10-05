@@ -4,6 +4,7 @@
 import { readFileSync, writeFileSync, existsSync, statSync, realpathSync, mkdirSync } from 'node:fs';
 import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { validateShape } from './validate.mjs';
 
 const USAGE = 'Usage: node build.mjs <flow.json> <out.html> [--root <repo-root>]';
 const MAX_EXCERPT = 40;
@@ -30,25 +31,37 @@ const here = dirname(fileURLToPath(import.meta.url));
 let flow;
 try { flow = JSON.parse(readFileSync(flowPath, 'utf8')); }
 catch (e) { console.error(`flow-map: cannot read ${flowPath}: ${e.message}`); process.exit(1); }
-const errors = [];
+const errors = validateShape(flow);
+if (errors.length) {
+  console.error(`flow-map: ${errors.length} problem(s)\n- ${errors.join('\n- ')}`);
+  process.exit(1);
+}
+try {
+  if (!statSync(root).isDirectory()) throw new Error('not a directory');
+} catch { console.error('flow-map: --root must be an existing directory'); process.exit(1); }
 const fail = msg => errors.push(msg);
 const fileCache = new Map();
 
 function readLines(path) {
   if (fileCache.has(path)) return fileCache.get(path);
   const abs = resolve(root, path);
-  const lines = existsSync(abs) && statSync(abs).isFile() ? readFileSync(abs, 'utf8').split('\n') : null;
+  let lines = null;
+  try {
+    if (existsSync(abs) && inRoot(path) && statSync(abs).isFile()) lines = readFileSync(abs, 'utf8').split('\n');
+  } catch { /* Missing, unreadable, or broken symlink: report as a validation problem. */ }
   fileCache.set(path, lines);
   return lines;
 }
 /** Resolves symlinks on both sides, so a link inside the project cannot reach outside it. */
 function inRoot(path) {
-  const rel = relative(realpathSync(root), realpathSync(resolve(root, path)));
-  return rel !== '..' && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
+  try {
+    const rel = relative(realpathSync(root), realpathSync(resolve(root, path)));
+    return rel !== '..' && !rel.startsWith(`..${sep}`) && !isAbsolute(rel);
+  } catch { return false; }
 }
 function excerpt(where, path, lines) {
   if (path.endsWith('/')) {
-    if (!existsSync(resolve(root, path))) fail(`${where}: folder ${path} does not exist`);
+    if (!existsSync(resolve(root, path)) || !statSync(resolve(root, path)).isDirectory()) fail(`${where}: folder ${path} does not exist`);
     else if (!inRoot(path)) fail(`${where}: ${path} is outside ${root}`);
     if (lines) fail(`${where}: a folder takes no line range`);
     return undefined;
@@ -66,7 +79,7 @@ function excerpt(where, path, lines) {
 
 if (typeof flow.title !== 'string' || !flow.title) fail('title is required');
 if (!flow.views || typeof flow.views !== 'object') fail('views is required');
-if (!flow.views?.[flow.root]) fail(`root "${flow.root}" is not a view`);
+if (!Object.hasOwn(flow.views, flow.root)) fail(`root "${flow.root}" is not a view`);
 flow.issues ??= [];
 
 for (const [vid, v] of Object.entries(flow.views ?? {})) {
@@ -83,7 +96,8 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
     if (!n.label) fail(`${w}: label is required`);
     if (!layers.has(n.layer)) fail(`${w}: unknown layer "${n.layer}"`);
     if (!KINDS.has(n.kind)) fail(`${w}: unknown kind "${n.kind}"`);
-    if (n.drill && !flow.views[n.drill]) fail(`${w}: drill target "${n.drill}" is not a view`);
+    if (n.drill && !Object.hasOwn(flow.views, n.drill)) fail(`${w}: drill target "${n.drill}" is not a view`);
+    delete n.excerpt;
     if (n.file) n.excerpt = excerpt(w, n.file, n.lines);
   }
   const edges = new Set();
@@ -115,7 +129,7 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
 for (const i of flow.issues) {
   const w = `issues.${i.id}`;
   if (!SEVERITIES.has(i.severity)) fail(`${w}: severity must be one of ${[...SEVERITIES].join(', ')}`);
-  const v = flow.views?.[i.view];
+  const v = Object.hasOwn(flow.views, i.view) ? flow.views[i.view] : undefined;
   if (!v) { fail(`${w}: unknown view "${i.view}"`); continue; }
   if (!i.node && !i.edge) fail(`${w}: needs a node or an edge`);
   if (i.node && !v.nodes.some(n => n.id === i.node)) fail(`${w}: unknown node "${i.node}"`);
@@ -139,9 +153,9 @@ const sprite = readFileSync(resolve(here, '../assets/icons.svg'), 'utf8');
 const esc = t => t.replace(/&/g, '&amp;').replace(/</g, '&lt;');
 // Replacer functions keep $' and $& in excerpts literal.
 const html = template
-  .replace('__TITLE__', () => esc(flow.title))
+  .replace('__TITLE__', () => esc(redact(flow.title)))
   .replace('<!--__SPRITE__-->', () => sprite)
-  .replace('/*__FLOW_DATA__*/null', () => JSON.stringify(flow).replace(/</g, '\\u003c'));
+  .replace('/*__FLOW_DATA__*/null', () => `JSON.parse(${JSON.stringify(JSON.stringify(flow, (key, value) => typeof value === 'string' ? redact(value) : value)).replace(/</g, '\\u003c')})`);
 try {
   mkdirSync(dirname(resolve(outPath)), { recursive: true });
   writeFileSync(outPath, html);
