@@ -1,0 +1,8 @@
+node_modules/
+example.html
+flow-maps/
+.DS_Store
+*.log
+coverage/
+test-results/
+playwright-report/
