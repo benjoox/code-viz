@@ -30,7 +30,8 @@ generated page and the example's source ranges in sync when changing the builder
 ## Remaining launch assets
 
 The supplied 16:9 video and its 0:02 thumbnail are attached to v0.1.0 and linked from the
-README through a watch page. File metadata confirms 1920 × 1080 at 60 fps, 79.168 seconds,
+README with a native GitHub video player. The watch page uses the supplied thumbnail as
+its poster; GitHub controls the inline player preview. File metadata confirms 1920 × 1080 at 60 fps, 79.168 seconds,
 H.264 video and AAC audio. The second aspect ratio and caption file remain outstanding;
 caption accuracy has not been verified. Icon provenance has been requested from the author. A social preview PNG
 is provided at `docs/social-preview.png`; upload it under repository Settings → General →
