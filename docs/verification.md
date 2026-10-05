@@ -9,7 +9,7 @@ Checked on 2026-10-05. This records observed results, not a guarantee of every a
 | Skills installer | `skills` 1.7.0 installs this local checkout into a temporary project for Claude Code, Codex, Cursor and Gemini CLI. It warns that Node.js 22.20.0 or newer is required; use an up-to-date LTS version. |
 | Viewer | Chromium browser check passes playback, next/previous, scenarios, drill-down/back, node selection, zoom/fit, details toggle, reduced-motion default, and 390px mobile width. No JavaScript errors or external network requests. |
 | Secret scan | Gitleaks 8.30.1 scans all five commits reachable from local refs, plus the working tree, with no findings. GitHub's secret scanning alert list is empty. Scans cannot prove the absence of all secrets. |
-| CI | Configured for Node.js 22 and 24 on Ubuntu, macOS and Windows. The launch PR records actual run results. |
+| CI | [Launch CI](https://github.com/benjoox/code-viz/actions/runs/37296775973) passes all six combinations: Node.js 22 and 24 on Ubuntu, macOS and Windows, including deterministic demo regeneration. |
 
 End-to-end map generation through each agent has not been exercised in this launch check.
 An installed skill is not evidence that every agent follows its instructions identically.
