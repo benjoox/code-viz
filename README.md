@@ -1,9 +1,16 @@
 # code-viz
 
+[![CI](https://github.com/benjoox/code-viz/actions/workflows/ci.yml/badge.svg)](https://github.com/benjoox/code-viz/actions/workflows/ci.yml)
+[![MIT license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 Agent skills that turn code, docs and user journeys into interactive visual maps you can
 play, step through and review.
 
 ![A flow map of the skill's own build script: layered nodes on the left, the current step's files and excerpts on the right](docs/flow-map.png)
+
+**[Try the interactive demo](https://benjoox.github.io/code-viz/demo/)** · [Report a bug](https://github.com/benjoox/code-viz/issues/new/choose)
+
+Install → ask your agent to map one workflow → open the generated HTML and step through it.
 
 ## Skills
 
@@ -44,7 +51,7 @@ Ask in plain words from the root of the project you want mapped:
 Or call it directly: `/code-viz:flow-map src/api/checkout`.
 
 The agent traces real entry points, writes a `flow.json` model and builds the page. It
-reads your code and never edits it.
+reads your code and writes a model and HTML map to a scratch folder; it does not edit the source being mapped.
 
 ## How it stays honest
 
@@ -59,7 +66,9 @@ reads your code and never edits it.
 
 ## Requirements
 
-Node.js 18 or later. No dependencies.
+Use an up-to-date Node.js 22 or 24 LTS release. The builder has no runtime dependencies.
+The `skills` installer currently requires Node.js 22.20.0 or newer.
+See [verification notes](docs/verification.md) for tested installations and environments.
 
 ## Try the example
 
@@ -71,6 +80,24 @@ node skills/flow-map/scripts/build.mjs skills/flow-map/assets/example.flow.json 
 ```
 
 Open `example.html` in a browser.
+
+## Privacy and limitations
+
+The generated HTML **contains source excerpts**. Review it before sharing: automatic
+redaction is best-effort and cannot guarantee removal of secrets or private information.
+The viewer works offline with no external fonts, scripts or analytics. Your agent's data
+handling depends on that agent's provider and settings. Valid source lines do not guarantee
+that an agent's explanation is correct. See [SECURITY.md](SECURITY.md).
+
+## Contribute and get help
+
+Start with [CONTRIBUTING.md](CONTRIBUTING.md) for setup and PR expectations, or use the
+[issue templates](https://github.com/benjoox/code-viz/issues/new/choose) to report a bug or
+suggest a feature. Run `npm run check` and `npm run demo` to validate a local checkout.
+[Support](SUPPORT.md) is best-effort; please follow the [code of conduct](CODE_OF_CONDUCT.md).
+
+See the [changelog](CHANGELOG.md) and [releases](https://github.com/benjoox/code-viz/releases)
+for versioned updates. This is an early project; the schema may evolve before 1.0.
 
 ## License
 
