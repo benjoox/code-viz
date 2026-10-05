@@ -6,7 +6,9 @@
 Agent skills that turn code, docs and user journeys into interactive visual maps you can
 play, step through and review.
 
-![A flow map of the skill's own build script: layered nodes on the left, the current step's files and excerpts on the right](docs/flow-map.png)
+[![Watch the code-viz explainer: Do you still read every line of code the AI writes?](docs/video-thumbnail.png)](https://benjoox.github.io/code-viz/watch/)
+
+[Watch the 79-second explainer](https://benjoox.github.io/code-viz/watch/) · [Download the video](https://github.com/benjoox/code-viz/releases/download/v0.1.0/CodeVizFlowMapOpenSource.mp4)
 
 **[Try the interactive demo](https://benjoox.github.io/code-viz/demo/)** · [Report a bug](https://github.com/benjoox/code-viz/issues/new/choose)
 
