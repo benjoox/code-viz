@@ -23,4 +23,11 @@ If you need a narrated explainer for your own developer tool, message me.
 - Confirm all footage and audio can be distributed publicly. The public demo must contain only public sample code.
 - Record the post URL and feedback; use actual user reports to choose the next change.
 
-Video paths and final captions are pending the supplied assets. This draft has not been posted.
+## Supplied assets
+
+- [16:9 video](https://github.com/benjoox/code-viz/releases/download/v0.1.0/CodeVizFlowMapOpenSource.mp4): 1920 × 1080, 60 fps, 79.168 seconds, H.264 video with AAC audio.
+- [Thumbnail](video-thumbnail.png): the supplied 1920 × 1080 cover at 0:02.
+- [Watch page](https://benjoox.github.io/code-viz/watch/) for the repository README.
+
+Upload the MP4 natively to LinkedIn and select the PNG as its cover. The second aspect
+ratio and a caption file have not been supplied. This draft has not been posted.

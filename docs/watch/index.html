@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Watch code-viz — interactive code maps</title>
+  <meta name="description" content="A 79-second introduction to code-viz, open-source agent skills for interactive code maps.">
+  <meta property="og:title" content="Do you still read every line of code the AI writes?">
+  <meta property="og:description" content="Watch the code-viz explainer, then try the interactive demo.">
+  <meta property="og:image" content="https://benjoox.github.io/code-viz/video-thumbnail.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://benjoox.github.io/code-viz/watch/">
+  <style>
+    :root { color-scheme: dark; font-family: system-ui, sans-serif; background: #10261d; color: #f4f3e9; }
+    body { max-width: 1100px; margin: auto; padding: 32px 20px 48px; }
+    h1 { font-size: clamp(28px, 5vw, 48px); line-height: 1.15; margin-bottom: 12px; }
+    p { color: #cedbd3; line-height: 1.6; }
+    video { display: block; width: 100%; aspect-ratio: 16 / 9; background: #000; border-radius: 12px; margin: 24px 0; }
+    nav { display: flex; gap: 16px 24px; flex-wrap: wrap; }
+    a { color: #ffdc66; text-underline-offset: 4px; }
+    a:focus-visible { outline: 3px solid currentColor; outline-offset: 5px; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>See how your code flows.</h1>
+    <p>A 79-second introduction to code-viz: interactive maps, source excerpts, and flows you can step through.</p>
+    <video controls playsinline preload="metadata" poster="../video-thumbnail.png" aria-label="code-viz open-source explainer">
+      <source src="https://github.com/benjoox/code-viz/releases/download/v0.1.0/CodeVizFlowMapOpenSource.mp4" type="video/mp4">
+      Your browser cannot play this video. Use the download link below.
+    </video>
+    <nav aria-label="Explore code-viz">
+      <a href="../demo/">Try the interactive demo</a>
+      <a href="https://github.com/benjoox/code-viz">View the repository</a>
+      <a href="https://github.com/benjoox/code-viz/releases/download/v0.1.0/CodeVizFlowMapOpenSource.mp4">Download the video</a>
+    </nav>
+  </main>
+</body>
+</html>
