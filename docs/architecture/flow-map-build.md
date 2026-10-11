@@ -35,8 +35,8 @@ flowchart LR
   code, using the fence state from the top of the file. The builder overwrites any block
   list supplied in `flow.json`. The template draws blocks from text nodes only, so excerpt text cannot
   become markup. Only `http(s)` links stay links, and images show their alt text.
-- The template owns navigation, playback and the source/state/issue panel, and the colour
-  tokens. Node kinds map to six hue families plus two neutrals that are kept apart from the
+- The template owns navigation, playback and the source/state/issue panel, the colour
+  tokens and a header button that toggles light and dark. Node kinds map to six hue families plus two neutrals that are kept apart from the
   four reserved severity colours. Wires and node outlines are drawn at 3:1 or more against
   their lane, and inactive nodes keep full-contrast text.
 - Excerpts are snapshots. After source changes, update the model's paths, ranges and

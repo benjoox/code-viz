@@ -42,6 +42,12 @@ test('build creates a standalone page with actual excerpts', t => {
   assert.match(html, /line 1/); assert.match(html, /<svg/);
   assert.doesNotMatch(html, /__FLOW_DATA__|__SPRITE__|__TITLE__|fonts.googleapis|fonts.gstatic/);
 });
+test('page carries one theme toggle and both of its icons', t => {
+  const f = fixture(t); assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.equal(html.match(/id="theme"/g).length, 1);
+  assert.match(html, /<symbol id="i-sun"/); assert.match(html, /<symbol id="i-moon"/);
+});
 for (const [name, change, pattern] of [
   ['unknown node', f => f.flow.views.main.scenarios[0].steps[0].nodes.push('missing'), /unknown node/],
   ['unknown edge', f => f.flow.views.main.scenarios[0].steps[0].edges = ['missing'], /unknown edge/],

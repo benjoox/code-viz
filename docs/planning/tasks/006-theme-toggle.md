@@ -1,6 +1,6 @@
 # CV-006: Add a light and dark theme toggle button
 
-Status: Open
+Status: Done 2026-10-11
 Backlog: [CV-006](../../backlog.jsonld)
 Blocks: none
 

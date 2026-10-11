@@ -53,10 +53,10 @@
     "id": "CV-006",
     "title": "Add a light and dark theme toggle button to the flow-map header",
     "type": "feature",
-    "status": "open",
+    "status": "done",
     "priority": "medium",
     "blocks": [],
     "area": "flow-map-viewer",
-    "description": "The viewer follows the OS light or dark setting and gives the reader no way to change it from the page, so switching needs DevTools or an edit to the HTML. Subtask 1: add one header button that toggles between light and dark, starting from the OS setting, with no auto state and no stored preference. Acceptance: one button whose accessible name states the action; it flips the whole page, the chart and the details pane included, between the existing token sets; it works when the OS is light and when it is dark; its icon matches the action and it is reachable by keyboard; the page gains no dependency or network request. Task: docs/planning/tasks/006-theme-toggle.md."
+    "description": "The viewer follows the OS light or dark setting and gives the reader no way to change it from the page, so switching needs DevTools or an edit to the HTML. Subtask 1: add one header button that toggles between light and dark, starting from the OS setting, with no auto state and no stored preference. Acceptance: one button whose accessible name states the action; it flips the whole page, the chart and the details pane included, between the existing token sets; it works when the OS is light and when it is dark; its icon matches the action and it is reachable by keyboard; the page gains no dependency or network request. Task: docs/planning/tasks/006-theme-toggle.md. Done 2026-10-11: checked in Chromium with the OS set to light and to dark; one click flips the page, chart and details pane, the label and icon name the theme the next click switches to, an OS change before the first click updates the icon, the button is a native focusable control and sits clear of the title at 390px, and the page makes no network request. A build test asserts one toggle and both icons."
   }
 ]
