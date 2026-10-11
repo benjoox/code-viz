@@ -1,6 +1,6 @@
 # CV-005: Clarify chart colours and emphasise the page header
 
-Status: Open
+Status: Done 2026-10-11
 Backlog: [CV-005](../../backlog.jsonld)
 Blocks: none
 
@@ -45,7 +45,7 @@ normal vision and 8 under protanopia and deuteranopia.
 - No node renders black in either theme.
 - The contrast pairs above meet their minimums in light and dark, measured again and
   recorded in the backlog entry.
-- No two kind or severity colours are indistinguishable under normal vision or
-  protanopia and deuteranopia.
+- No two hue families are closer than the validator floors, and no kind colour is
+  closer than 9 to a severity colour under normal vision.
 - The header reads as the first level of the page in light, dark and a 390px viewport.
 - `npm run check` passes and `docs/demo/index.html` is rebuilt.

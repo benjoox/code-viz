@@ -9,9 +9,9 @@
 :root {
   --bg: #f2f3f7; --surface: #ffffff; --ink: #1a1e29; --muted: #5b6275; --line: #d3d8e3; --band: #e9ecf2;
   --accent: #3b5bdb; --ok: #2b8047; --bug: #c0352e; --risk: #b25e00; --smell: #6d56c9; --question: #0b7a84;
-  --c-user: #b26400; --c-ui: #2f6fd6; --c-api: #6546d4; --c-service: #37415a; --c-data: #0b7a84;
-  --c-queue: #8a4fb0; --c-external: #6b7280; --c-auth: #a4343a; --c-job: #7a6a1f; --c-state: #c2338a; --c-ai: #9b3fd1;
-  --f-code: #2f6fd6; --f-doc: #6546d4; --f-data: #b26400; --f-media: #c2338a; --f-slides: #d9480f; --f-config: #37415a; --f-folder: #7a6a1f;
+  --c-ui: #2253aa; --c-api: #9b69f4; --c-queue: #a28218; --c-ai: #93137d; --c-data: #247544; --c-doc: #3e8abf; --c-service: #37415a; --c-external: #83868f;
+  --lane: #e3e7ef; --wire: #6b7488;
+  --f-code: #2f6fd6; --f-doc: var(--c-doc); --f-data: #b26400; --f-media: #c2338a; --f-slides: #d9480f; --f-config: #37415a; --f-folder: var(--c-doc);
   --body: "Instrument Sans", "Helvetica Neue", Arial, sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
 }
@@ -19,25 +19,27 @@
   :root:not([data-theme="light"]) {
     --bg: #10131a; --surface: #181c26; --ink: #e7e9f0; --muted: #9ba2b5; --line: #2b3140; --band: #151923;
     --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
-    --c-user: #f0a23a; --c-ui: #6ea4ff; --c-api: #a68dff; --c-service: #c3cad9; --c-data: #3fc3cd;
-    --c-queue: #d18cf5; --c-external: #9ca3af; --c-auth: #ff8a8f; --c-job: #d9c45a; --c-state: #ff7fc0; --c-ai: #d59cff;
-    --f-code: #6ea4ff; --f-doc: #a68dff; --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: #d9c45a;
+    --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
+    --lane: #1d2230; --wire: #7a8399;
+    --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
   --bg: #10131a; --surface: #181c26; --ink: #e7e9f0; --muted: #9ba2b5; --line: #2b3140; --band: #151923;
   --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
-  --c-user: #f0a23a; --c-ui: #6ea4ff; --c-api: #a68dff; --c-service: #c3cad9; --c-data: #3fc3cd;
-  --c-queue: #d18cf5; --c-external: #9ca3af; --c-auth: #ff8a8f; --c-job: #d9c45a; --c-state: #ff7fc0; --c-ai: #d59cff;
-  --f-code: #6ea4ff; --f-doc: #a68dff; --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: #d9c45a;
+  --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
+  --lane: #1d2230; --wire: #7a8399;
+  --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); padding-inline: 16px; padding-block: 24px 48px; }
 .wrap { max-width: 1560px; margin: 0 auto; display: grid; gap: 16px; }
-h1 { font-size: clamp(1.5rem, 3vw, 2.2rem); line-height: 1.15; margin: 0; text-wrap: balance; }
-.sub { color: var(--muted); max-width: 80ch; margin: 4px 0 0; }
+header { border-left: 4px solid var(--accent); padding: 2px 0 2px 16px; }
+header .eyebrow { color: var(--accent); }
+h1 { font-size: clamp(1.9rem, 4vw, 2.9rem); font-weight: 800; letter-spacing: -0.02em; line-height: 1.08; margin: 6px 0 0; text-wrap: balance; }
+.sub { color: var(--muted); font-size: 1.05rem; max-width: 72ch; margin: 8px 0 0; }
 .mono { font-family: var(--mono); }
 .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 .eyebrow { font: 600 0.7rem/1 var(--mono); letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); }
@@ -75,17 +77,15 @@ button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent);
 #canvas { display: block; width: 100%; height: auto; cursor: grab; user-select: none; }
 #canvas.panning { cursor: grabbing; }
 #canvas text { font-family: var(--body); fill: var(--ink); }
-#canvas .band { fill: var(--band); }
+#canvas .band { fill: var(--lane); }
 #canvas .band-label { font: 600 10.5px var(--mono); letter-spacing: 0.12em; fill: var(--muted); }
-#canvas .edge path.wire { fill: none; stroke: var(--line); stroke-width: 2; transition: stroke .2s, opacity .2s; }
+#canvas .edge path.wire { fill: none; stroke: var(--wire); stroke-width: 1.8; transition: stroke .2s; }
 #canvas .edge .elabel rect { fill: var(--surface); }
 #canvas .edge .elabel text { font: 10px var(--mono); fill: var(--muted); text-anchor: middle; dominant-baseline: central; }
-#canvas .edge.on path.wire { stroke: var(--accent); stroke-width: 2.6; }
+#canvas .edge.on path.wire { stroke: var(--accent); stroke-width: 3; }
 #canvas .edge.on .elabel text { fill: var(--ink); font-weight: 600; }
-#canvas.dim .edge:not(.on) { opacity: 0.35; }
-#canvas .node { cursor: pointer; transition: opacity .2s; }
-#canvas.dim .node:not(.on):not(.sel) { opacity: 0.42; }
-#canvas .node .box { fill: var(--surface); stroke: var(--line); stroke-width: 1.5; transition: stroke .2s, fill .2s; }
+#canvas .node { cursor: pointer; }
+#canvas .node .box { fill: var(--surface); stroke: var(--wire); stroke-width: 1.5; transition: stroke .2s, fill .2s; }
 #canvas .node.on .box { stroke: var(--k); stroke-width: 2.5; fill: color-mix(in srgb, var(--k) 12%, var(--surface)); }
 #canvas .node.sel .box { stroke: var(--accent); stroke-width: 2.5; stroke-dasharray: 5 3; }
 #canvas .node .disc { fill: color-mix(in srgb, var(--k) 16%, var(--surface)); }
@@ -149,11 +149,13 @@ details[open] > summary::before { transform: rotate(90deg); }
 .md-table code { white-space: nowrap; }
 .md-rule { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
 .issue { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; text-align: left; width: 100%; }
+.issue { color: var(--ink); }
 .issue svg { width: 18px; height: 18px; }
+.issue.sev-bug svg { color: var(--bug); } .issue.sev-risk svg { color: var(--risk); } .issue.sev-smell svg { color: var(--smell); } .issue.sev-question svg { color: var(--question); }
 .issue .t { font-weight: 600; font-size: 0.86rem; }
 .issue .m { font: 0.72rem var(--mono); color: var(--muted); overflow-wrap: anywhere; }
 .issue .d { font-size: 0.82rem; margin-top: 2px; }
-.issue .fx { font-size: 0.82rem; margin-top: 2px; color: var(--ok); }
+.issue .fx { font-size: 0.82rem; margin-top: 2px; }
 .issues { display: grid; gap: 6px; }
 .steps { margin: 0; padding: 0; list-style: none; display: grid; gap: 4px; counter-reset: s; }
 .steps button { width: 100%; text-align: left; display: grid; grid-template-columns: 2em minmax(0, 1fr); gap: 6px; font-size: 0.84rem; padding: 6px 8px; }
@@ -293,13 +295,13 @@ details[open] > summary::before { transform: rotate(90deg); }
   const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
   const $ = id => document.getElementById(id);
   const KIND = {
-    user: ['i-user', 'user'], ui: ['i-ui', 'ui'], page: ['i-ui', 'ui'], component: ['i-component', 'ui'], hook: ['i-hook', 'ui'],
-    api: ['i-api', 'api'], route: ['i-api', 'api'], service: ['i-service', 'service'], function: ['i-function', 'service'],
-    job: ['i-job', 'job'], event: ['i-event', 'queue'], auth: ['i-auth', 'auth'], state: ['i-state', 'state'],
-    external: ['i-external', 'external'], ai: ['i-ai', 'ai'],
-    db: ['i-db', 'data'], table: ['i-table', 'data'], cache: ['i-cache', 'data'], bucket: ['i-bucket', 'data'],
-    queue: ['i-queue', 'queue'], search: ['i-search', 'data'], vector: ['i-vector', 'data'],
-    file: ['i-file', 'external'], doc: ['i-file-doc', 'doc'], folder: ['i-folder', 'job'],
+    user: ['i-user', 'ui'], ui: ['i-ui', 'ui'], page: ['i-ui', 'ui'], component: ['i-component', 'ui'], hook: ['i-hook', 'ui'],
+    api: ['i-api', 'api'], route: ['i-api', 'api'], auth: ['i-auth', 'api'],
+    service: ['i-service', 'service'], function: ['i-function', 'service'], state: ['i-state', 'service'],
+    job: ['i-job', 'queue'], event: ['i-event', 'queue'], queue: ['i-queue', 'queue'],
+    ai: ['i-ai', 'ai'], external: ['i-external', 'external'],
+    db: ['i-db', 'data'], table: ['i-table', 'data'], cache: ['i-cache', 'data'], bucket: ['i-bucket', 'data'], search: ['i-search', 'data'], vector: ['i-vector', 'data'],
+    file: ['i-file', 'doc'], doc: ['i-file-doc', 'doc'], folder: ['i-folder', 'doc'],
   };
   const SEV = { bug: 'i-bug', risk: 'i-alert', smell: 'i-info', question: 'i-question' };
   const SEV_ORDER = ['bug', 'risk', 'smell', 'question'];
@@ -390,7 +392,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     svg.innerHTML = '';
     const defs = el('defs', {}, svg);
     const mk = el('marker', { id: 'arrow', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
-    el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--muted)' }, mk);
+    el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--wire)' }, mk);
     const mkOn = el('marker', { id: 'arrow-on', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
     el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--accent)' }, mkOn);
 
@@ -514,7 +516,6 @@ details[open] > summary::before { transform: rotate(90deg); }
   let prevState = {};
   function apply() {
     const st = stepData(), sc = scenario();
-    svg.classList.add('dim');
     for (const [id, g] of Object.entries(geo.nodeEls)) { g.classList.toggle('on', st.nodes.includes(id)); g.classList.toggle('sel', S.sel === id); }
     for (const [id, { g, p }] of Object.entries(geo.edgeEls)) { const on = (st.edges || []).includes(id); g.classList.toggle('on', on); p.setAttribute('marker-end', on ? 'url(#arrow-on)' : 'url(#arrow)'); }
     geo.packets.innerHTML = '';

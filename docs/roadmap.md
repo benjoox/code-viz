@@ -17,7 +17,7 @@ at a glance in light and dark.
 | Ticket | Outcome | State |
 | --- | --- | --- |
 | CV-004 | Excerpts of `.md` files render as formatted text | Done |
-| CV-005 | Chart colours are distinct and the header is emphasised | Open |
+| CV-005 | Chart colours are distinct and the header is emphasised | Done |
 
 The [backlog](backlog.jsonld) owns ticket status and acceptance criteria.
 

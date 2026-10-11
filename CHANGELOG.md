@@ -3,6 +3,9 @@
 ## Unreleased
 
 - Markdown excerpts render as formatted text with their file line numbers.
+- Doc nodes no longer draw black. Node kinds use six validated hue families, wires and outlines
+  meet 3:1 contrast, and inactive nodes keep readable text in light and dark.
+- The page header has a larger, heavier title and an accent rule.
 
 ## 0.1.0
 
