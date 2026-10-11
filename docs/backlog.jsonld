@@ -28,5 +28,25 @@
     "blocks": [],
     "area": "codex-connection",
     "description": "Support the user's choice to continue an existing Codex conversation from the map when its owning runtime exposes a compatible interface. Depends on CV-001 and CV-002. Scope: explicit thread/workspace selection, verified attach/resume behavior, correct response routing and busy-turn handling, and clear unavailable-session feedback. Acceptance: prove a question and reply are appended to the selected original thread with history and permissions preserved; test busy, missing and inaccessible destinations. Offer a dedicated conversation explicitly when attachment is unsupported, never silently create a new thread or claim same-session continuity. Plan: docs/planning/flow-map-codex-questions-plan.md. Task: docs/planning/tasks/003-existing-thread-routing.md. Keep this ticket open if existing-session access remains unverified or unsupported unless its scope is explicitly revised."
+  },
+  {
+    "id": "CV-004",
+    "title": "Render Markdown excerpts as formatted text in flow-map",
+    "type": "fix",
+    "status": "open",
+    "priority": "medium",
+    "blocks": [],
+    "area": "flow-map-viewer",
+    "description": "Excerpts of Markdown files appear as raw monospaced source: headings keep their # marks, tables show pipes and separator rows, and long prose lines run past the pane behind a scroll that is hidden until hover, so mapped docs are hard to read. Subtask 1: draw excerpts of .md files as formatted text (headings, paragraphs, lists, tables, quotes, fenced code, inline code, emphasis, http(s) links) from the builder's redacted lines, keeping the real file line numbers in a gutter and the highlighted issue line. Acceptance: node, step-file and issue excerpts of .md files render as formatted text and other files are unchanged; raw HTML, scripts, images and non-http(s) links in the source stay inert text; redaction runs before parsing; the builder ignores a supplied doc; the page makes no network request. Task: docs/planning/tasks/004-markdown-excerpts.md."
+  },
+  {
+    "id": "CV-005",
+    "title": "Clarify flow-map chart colours and emphasise the page header",
+    "type": "fix",
+    "status": "open",
+    "priority": "medium",
+    "blocks": [],
+    "area": "flow-map-viewer",
+    "description": "Two readability defects in the viewer's styling. Evidence: doc nodes draw as solid black boxes because --c-doc is never defined; edge wires and node outlines sit at 1.2:1 against their lane (3:1 is the non-text minimum); inactive node text falls to 1.8:1 to 2.5:1; kind colours repeat severity colours (data and question share one hex, user and risk are 1.4 apart and api and smell 4.3 apart in light and identical in dark, against a validator floor of 15); and the header is plain text on the page background. Subtask 1: chart colour. Define the missing doc colour, give wires and outlines at least 3:1, keep inactive text at least 4.5:1, and give each kind family a distinct hue that passes the data-viz palette checks in light and dark. Subtask 2: header emphasis. Give the title and subtitle a clearer block without adding content. Acceptance: no node renders black; the listed contrast pairs meet their minimums in both themes; no two kind or severity colours are indistinguishable; the header reads as the first level of the page in light, dark and a 390px viewport. Task: docs/planning/tasks/005-chart-colour-and-header.md."
   }
 ]
