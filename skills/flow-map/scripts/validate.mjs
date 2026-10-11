@@ -41,6 +41,7 @@ export function validateShape(flow) {
     records(view.nodes, `${at}.nodes`, (node, where) => {
       string(node.label, `${where}.label`); string(node.layer, `${where}.layer`); string(node.kind, `${where}.kind`);
       if (node.drill !== undefined) string(node.drill, `${where}.drill`);
+      if (node.note !== undefined && typeof node.note !== 'string') errors.push(`${where}.note: expected a string`);
       if (node.file !== undefined || node.lines !== undefined) file(node, where, 'file');
     }, true);
     records(view.edges, `${at}.edges`, (edge, where) => {
@@ -55,7 +56,9 @@ export function validateShape(flow) {
         for (const key of ['nodes', 'edges']) list(step[key], `${stepAt}.${key}`, string, true);
         if (step.state !== undefined) object(step.state, `${stepAt}.state`);
         list(step.files, `${stepAt}.files`, (ref, refAt) => {
-          if (object(ref, refAt)) file(ref, refAt, 'path');
+          if (!object(ref, refAt)) return;
+          file(ref, refAt, 'path');
+          if (ref.note !== undefined && typeof ref.note !== 'string') errors.push(`${refAt}.note: expected a string`);
         }, true);
       });
     });

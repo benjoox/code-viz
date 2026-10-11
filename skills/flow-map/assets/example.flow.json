@@ -42,8 +42,8 @@
           "layer": "cli",
           "file": "scripts/build.mjs",
           "lines": [
-            22,
-            43
+            25,
+            46
           ],
           "note": "Takes exactly two paths plus an optional --root (default: the current folder) and loads flow.json; an unreadable flow exits 1."
         },
@@ -54,10 +54,10 @@
           "layer": "stage",
           "file": "scripts/build.mjs",
           "lines": [
-            87,
-            126
+            90,
+            129
           ],
-          "note": "Checks every view's layers, nodes, edges and steps, labels included, and cuts an excerpt for each file reference."
+          "note": "Checks every view's layers, nodes, edges and steps, labels included, and cuts an excerpt for each file reference, with parsed blocks for Markdown."
         },
         {
           "id": "issues",
@@ -66,8 +66,8 @@
           "layer": "stage",
           "file": "scripts/build.mjs",
           "lines": [
-            129,
-            144
+            134,
+            150
           ],
           "note": "Checks each issue's severity, target and line, and attaches the two lines either side."
         },
@@ -78,8 +78,8 @@
           "layer": "stage",
           "file": "scripts/build.mjs",
           "lines": [
-            146,
-            149
+            152,
+            155
           ],
           "note": "Prints every collected problem at once and exits 1 without writing a page."
         },
@@ -90,8 +90,8 @@
           "layer": "stage",
           "file": "scripts/build.mjs",
           "lines": [
-            151,
-            162
+            157,
+            168
           ],
           "note": "Injects the title, icon sprite and flow data into the template, then writes the page, creating its folder."
         },
@@ -102,8 +102,8 @@
           "layer": "read",
           "file": "scripts/build.mjs",
           "lines": [
-            62,
-            78
+            65,
+            81
           ],
           "drill": "excerpt",
           "note": "Keeps a path inside the project, checks its line range and returns the redacted lines."
@@ -115,8 +115,8 @@
           "layer": "read",
           "file": "scripts/build.mjs",
           "lines": [
-            45,
-            54
+            48,
+            57
           ],
           "note": "Checks the real path stays inside the project before reading and caching the file."
         },
@@ -251,8 +251,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    22,
-                    28
+                    25,
+                    31
                   ],
                   "role": "reads",
                   "note": "Paths in flow.json resolve against this root."
@@ -275,8 +275,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    30,
-                    33
+                    33,
+                    36
                   ],
                   "role": "reads"
                 }
@@ -300,8 +300,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    92,
-                    102
+                    95,
+                    106
                   ],
                   "role": "calls",
                   "note": "Node ids, layers, kinds and drill targets."
@@ -309,8 +309,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    114,
-                    124
+                    118,
+                    129
                   ],
                   "role": "calls",
                   "note": "Step node and edge ids, file roles and excerpts."
@@ -332,16 +332,16 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    62,
-                    78
+                    65,
+                    81
                   ],
                   "role": "defines"
                 },
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    45,
-                    54
+                    48,
+                    57
                   ],
                   "role": "reads"
                 }
@@ -362,8 +362,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    129,
-                    144
+                    134,
+                    150
                   ],
                   "role": "defines"
                 }
@@ -390,8 +390,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    151,
-                    162
+                    157,
+                    168
                   ],
                   "role": "writes"
                 }
@@ -420,16 +420,16 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    117,
-                    118
+                    121,
+                    122
                   ],
                   "role": "reads"
                 },
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    76,
-                    76
+                    79,
+                    79
                   ],
                   "role": "reads"
                 }
@@ -454,8 +454,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    146,
-                    149
+                    152,
+                    155
                   ],
                   "role": "writes",
                   "note": "Writes to stderr only."
@@ -497,8 +497,8 @@
           "layer": "checks",
           "file": "scripts/build.mjs",
           "lines": [
-            63,
-            67
+            66,
+            70
           ],
           "note": "A path ending in / must exist inside the project and takes no line range."
         },
@@ -509,8 +509,8 @@
           "layer": "checks",
           "file": "scripts/build.mjs",
           "lines": [
-            69,
-            76
+            72,
+            79
           ],
           "note": "The file must exist inside the project, symlinks resolved, and the range must be whole, in bounds and 40 lines or fewer."
         },
@@ -521,8 +521,8 @@
           "layer": "output",
           "file": "scripts/build.mjs",
           "lines": [
-            14,
-            20
+            15,
+            21
           ],
           "note": "Masks secret-looking assignments, Bearer and Basic credentials, key= query values and common token shapes."
         },
@@ -578,8 +578,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    63,
-                    67
+                    66,
+                    70
                   ],
                   "role": "defines"
                 }
@@ -601,8 +601,8 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    69,
-                    76
+                    72,
+                    79
                   ],
                   "role": "defines"
                 }
@@ -626,16 +626,16 @@
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    77,
-                    77
+                    80,
+                    80
                   ],
                   "role": "defines"
                 },
                 {
                   "path": "scripts/build.mjs",
                   "lines": [
-                    14,
-                    20
+                    15,
+                    21
                   ],
                   "role": "defines"
                 }
