@@ -155,6 +155,29 @@ test('redacts secrets before parsing Markdown', t => {
   const html = readFileSync(f.output, 'utf8');
   assert.doesNotMatch(html, new RegExp(credential)); assert.match(html, /\[redacted\]/);
 });
+test('parses node and file notes as Markdown and drops the raw text', t => {
+  const f = fixture(t);
+  f.flow.views.main.nodes[0].note = '## Heading\n\n| a | b |\n|---|---|\n| `x` | y |';
+  f.flow.views.main.scenarios[0].steps[0].files[0].note = 'See **this** `file`.';
+  assert.equal(f.run().status, 0);
+  const { views: { main } } = embedded(readFileSync(f.output, 'utf8'));
+  const [node] = main.nodes, [file] = main.scenarios[0].steps[0].files;
+  assert.deepEqual(node.noteDoc.map(b => b.type), ['heading', 'table']);
+  assert.equal(node.note, undefined);
+  assert.deepEqual(file.noteDoc[0].inline, ['See ', { strong: ['this'] }, ' ', { code: 'file' }, '.']);
+  assert.equal(file.note, undefined);
+});
+test('ignores a supplied noteDoc and redacts notes before parsing', t => {
+  const credential = 'synthetic' + 'Credential123456';
+  const f = fixture(t);
+  f.flow.views.main.nodes[0].noteDoc = [{ type: 'paragraph', line: 1, end: 1, inline: [{ href: 'javascript:alert(1)', text: ['forged'] }] }];
+  f.flow.views.main.scenarios[0].steps[0].files[0].note = `password: \`${credential}\``;
+  assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.doesNotMatch(html, new RegExp(`forged|javascript:|${credential}`)); assert.match(html, /\[redacted\]/);
+});
+test('rejects a note that is not a string', t => reject(t, f => { f.flow.views.main.nodes[0].note = { text: 'x' }; }, /note: expected a string/));
+test('rejects a file note that is not a string', t => reject(t, f => { f.flow.views.main.scenarios[0].steps[0].files[0].note = 3; }, /note: expected a string/));
 test('usage rejects stray arguments', t => {
   const f = fixture(t); assert.equal(f.run(f.flow, ['extra']).status, 2);
 });

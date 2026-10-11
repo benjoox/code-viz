@@ -20,6 +20,8 @@ const SECRETS = [
 ];
 const redact = line => SECRETS.reduce((l, [re, to]) => l.replace(re, to), line);
 /** Markdown excerpts also carry parsed blocks, read from the redacted lines, for the page to draw. A range that starts inside a fenced block is read as code. */
+/** A note is Markdown prose written by the agent, so it is redacted and parsed like an excerpt. */
+const noteDoc = text => text ? parseMarkdown(text.split('\n').map(redact), 1) : undefined;
 const doc = (path, lines, from) => lines && isMarkdown(path) ? parseMarkdown(lines, from, openFence(readLines(path), from - 1)) : undefined;
 
 const args = process.argv.slice(2);
@@ -103,6 +105,8 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
     delete n.excerpt;
     if (n.file) n.excerpt = excerpt(w, n.file, n.lines);
     n.doc = doc(n.file, n.excerpt, n.lines?.[0]);
+    n.noteDoc = noteDoc(n.note);
+    delete n.note;
   }
   const edges = new Set();
   for (const e of v.edges ?? []) {
@@ -125,6 +129,8 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
         if (f.role && !ROLES.has(f.role)) fail(`${w}: unknown role "${f.role}"`);
         f.excerpt = excerpt(`${w} ${f.path}`, f.path, f.lines);
         f.doc = doc(f.path, f.excerpt, f.lines?.[0]);
+        f.noteDoc = noteDoc(f.note);
+        delete f.note;
       }
     });
   }

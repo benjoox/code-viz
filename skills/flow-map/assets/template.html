@@ -147,6 +147,10 @@ details[open] > summary::before { transform: rotate(90deg); }
 .md-table th { background: var(--band); font-weight: 600; }
 .md-table code { white-space: nowrap; }
 .md-rule { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
+.md.plain .md-row { grid-template-columns: minmax(0, 1fr); padding-right: 0; }
+.md.plain .md-row > i, .md.plain .code .l > i { display: none; }
+.md.plain .code .l { grid-template-columns: minmax(0, 1fr); padding-left: 10px; }
+.md.plain .md-code { margin-right: 0; }
 .issue { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; text-align: left; width: 100%; }
 .issue { color: var(--ink); }
 .issue svg { width: 18px; height: 18px; }
@@ -525,8 +529,8 @@ details[open] > summary::before { transform: rotate(90deg); }
     row.append(gutter, body);
     return row;
   }
-  function docView(blocks, hl) {
-    const box = h('div', 'md');
+  function docView(blocks, hl, plain) {
+    const box = h('div', plain ? 'md plain' : 'md');
     for (const b of blocks) {
       if (b.type === 'list') {
         for (const it of b.items) {
@@ -573,7 +577,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     s.append(icon(ic), h('span', 'p', `${f.path}${f.lines ? `:${f.lines[0]}-${f.lines[1]}` : ''}`));
     if (f.role) s.appendChild(h('span', `role ${f.role}`, f.role));
     d.appendChild(s);
-    if (f.note) d.appendChild(h('p', 'note', f.note));
+    if (f.noteDoc) { const note = docView(f.noteDoc, 0, true); note.classList.add('note'); d.appendChild(note); }
     if (f.excerpt) d.appendChild(f.doc ? docView(f.doc, f.hl) : codeBlock(f.excerpt, f.lines[0], f.hl));
     if (remember) d.addEventListener('toggle', () => { d.open ? collapsed.delete(key) : collapsed.add(key); });
     return d;
@@ -624,7 +628,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     const n = view().nodes.find(x => x.id === id);
     const card = $('selcard'); card.innerHTML = '';
     card.appendChild(h('div', 't', `${n.label} (${n.kind})`));
-    if (n.note) card.appendChild(h('p', '', n.note));
+    if (n.noteDoc) card.appendChild(docView(n.noteDoc, 0, true));
     if (n.drill) { const b = h('button', '', `Open ${DATA.views[n.drill].title}`); b.addEventListener('click', () => drillInto(n.drill)); card.appendChild(b); }
     if (n.file) card.appendChild(fileCard({ path: n.file, lines: n.lines, excerpt: n.excerpt, doc: n.doc }, false));
     issuesFor(S.view, id, null).forEach(i => card.appendChild(issueCard(i)));

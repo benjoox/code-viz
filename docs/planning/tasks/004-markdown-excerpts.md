@@ -17,6 +17,8 @@ to be read in.
   ([markdown.mjs](../../../skills/flow-map/scripts/markdown.mjs)) into blocks:
   headings, paragraphs, lists, tables, quotes, rules and fenced code, with inline
   code, emphasis and `http(s)` links.
+- Parse node and file `note` text the same way, so a note that carries headings or a table
+  reads as Markdown and not as one run-on paragraph.
 - Draw the blocks in the template from text nodes only, with the file line number of
   each block in the gutter and the issue line highlighted.
 - Leave every other file type as the existing numbered code view.

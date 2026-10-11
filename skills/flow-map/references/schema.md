@@ -2,6 +2,8 @@
 
 The build rejects unknown kinds, severities, roles and ids, missing files, line ranges
 outside a file and excerpts over 40 lines. Paths are relative to `--root` and must stay inside it.
+A `note` is one or two sentences of Markdown in your own words. Source text belongs in `file` and
+`lines`, which the build reads from disk, so never paste it into a note.
 
 ```jsonc
 {
