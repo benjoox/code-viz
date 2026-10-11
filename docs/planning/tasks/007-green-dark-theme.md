@@ -1,6 +1,6 @@
 # CV-007: Use a deep green dark theme and remove the header accent bar
 
-Status: Open
+Status: Done 2026-10-11
 Backlog: [CV-007](../../backlog.jsonld)
 Blocks: none
 

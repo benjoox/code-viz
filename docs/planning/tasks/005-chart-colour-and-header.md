@@ -37,8 +37,8 @@ normal vision and 8 under protanopia and deuteranopia.
 
 ## Subtask 2: header emphasis
 
-- Give the title block a stronger weight and a clear boundary from the controls
-  below it, with no new content.
+- Give the title a heavier weight and larger size, and the eyebrow the accent colour,
+  with no new content.
 
 ## Acceptance
 

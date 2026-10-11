@@ -17,26 +17,26 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #10131a; --surface: #181c26; --ink: #e7e9f0; --muted: #9ba2b5; --line: #2b3140; --band: #151923;
+    --bg: #04180c; --surface: #0a2a18; --ink: #e6f6ed; --muted: #8fc2a6; --line: #1f5a3a; --band: #071d10;
     --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
     --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
-    --lane: #1d2230; --wire: #7a8399;
+    --lane: #0c311e; --wire: #6aab8a;
     --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #10131a; --surface: #181c26; --ink: #e7e9f0; --muted: #9ba2b5; --line: #2b3140; --band: #151923;
+  --bg: #04180c; --surface: #0a2a18; --ink: #e6f6ed; --muted: #8fc2a6; --line: #1f5a3a; --band: #071d10;
   --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
   --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
-  --lane: #1d2230; --wire: #7a8399;
+  --lane: #0c311e; --wire: #6aab8a;
   --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
   color-scheme: dark;
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.55 var(--body); padding-inline: 16px; padding-block: 24px 48px; }
 .wrap { max-width: 1560px; margin: 0 auto; display: grid; gap: 16px; }
-header { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; border-left: 4px solid var(--accent); padding: 2px 0 2px 16px; }
+header { display: flex; gap: 16px; justify-content: space-between; align-items: flex-start; }
 header .eyebrow { color: var(--accent); }
 header > div { min-width: 0; }
 header > button { flex: none; }

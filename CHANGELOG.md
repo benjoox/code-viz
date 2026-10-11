@@ -6,7 +6,8 @@
   notes render as Markdown.
 - Doc nodes no longer draw black. Node kinds use six validated hue families, wires and outlines
   meet 3:1 contrast, and inactive nodes keep readable text in light and dark.
-- The page header has a larger, heavier title and an accent rule.
+- The page header has a larger, heavier title and an accent eyebrow.
+- The dark theme is a deep green.
 - A header button toggles the light and dark theme, starting from the OS setting.
 
 ## 0.1.0
