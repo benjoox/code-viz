@@ -15,6 +15,8 @@ an accent bar at its left edge, added under CV-005, that the reader asked to rem
   green ramp.
 - Keep text at 4.5:1 or more, wires and outlines at 3:1 or more, and every kind colour at
   3:1 or more against its lane. Leave the kind and severity hues as validated.
+- Draw borders darker, about 1.3:1 against the panel, and draw the disclosure arrows and
+  chart arrowheads white in dark. Light keeps its current arrows.
 
 ## Subtask 2: remove the header accent bar
 

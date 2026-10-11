@@ -17,19 +17,19 @@
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --bg: #000b03; --surface: #001b0a; --ink: #e6f6ed; --muted: #8fc2a6; --line: #09492a; --band: #000f05;
+    --bg: #000b03; --surface: #001b0a; --ink: #e6f6ed; --muted: #8fc2a6; --line: #06361e; --band: #000f05;
     --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
     --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
-    --lane: #002211; --wire: #6aab8a;
+    --lane: #002211; --wire: #6aab8a; --arrow: #ffffff;
     --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --bg: #000b03; --surface: #001b0a; --ink: #e6f6ed; --muted: #8fc2a6; --line: #09492a; --band: #000f05;
+  --bg: #000b03; --surface: #001b0a; --ink: #e6f6ed; --muted: #8fc2a6; --line: #06361e; --band: #000f05;
   --accent: #7c9bff; --ok: #62cb85; --bug: #ff6d62; --risk: #f0a23a; --smell: #a68dff; --question: #3fc3cd;
   --c-ui: #427dfc; --c-api: #9c54c7; --c-queue: #8e710f; --c-ai: #dd3c73; --c-data: #63a402; --c-doc: #009ab0; --c-service: #c3cad9; --c-external: #9ca3af;
-  --lane: #002211; --wire: #6aab8a;
+  --lane: #002211; --wire: #6aab8a; --arrow: #ffffff;
   --f-code: #6ea4ff; --f-doc: var(--c-doc); --f-data: #f0a23a; --f-media: #ff7fc0; --f-slides: #ff8c5a; --f-config: #c3cad9; --f-folder: var(--c-doc);
   color-scheme: dark;
 }
@@ -106,7 +106,7 @@ details.sec { border-top: 1px solid var(--line); padding-top: 8px; }
 details.sec:first-of-type { border-top: 0; padding-top: 0; }
 details > summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 6px; }
 details > summary::-webkit-details-marker { display: none; }
-details > summary::before { content: "▸"; font-size: 0.8em; color: var(--muted); transition: transform .15s; }
+details > summary::before { content: "▸"; font-size: 0.8em; color: var(--arrow, var(--muted)); transition: transform .15s; }
 details[open] > summary::before { transform: rotate(90deg); }
 .sec > summary { margin-bottom: 8px; }
 .sec .n { font: 600 0.7rem var(--mono); color: var(--muted); margin-left: auto; }
@@ -419,7 +419,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     svg.innerHTML = '';
     const defs = el('defs', {}, svg);
     const mk = el('marker', { id: 'arrow', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
-    el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--wire)' }, mk);
+    el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--arrow, var(--wire))' }, mk);
     const mkOn = el('marker', { id: 'arrow-on', viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
     el('path', { d: 'M0 0 10 5 0 10z', fill: 'var(--accent)' }, mkOn);
 
