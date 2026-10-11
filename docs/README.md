@@ -31,6 +31,7 @@ usage instructions remain in `skills/flow-map/`; link to them instead of copying
 - [CV-004: Markdown excerpts as formatted text](planning/tasks/004-markdown-excerpts.md).
 - [CV-005: chart colours and page header](planning/tasks/005-chart-colour-and-header.md).
 - [CV-006: light and dark theme toggle](planning/tasks/006-theme-toggle.md).
+- [CV-007: deep green dark theme](planning/tasks/007-green-dark-theme.md).
 
 ## Backlog contract
 

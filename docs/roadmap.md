@@ -19,6 +19,7 @@ at a glance in light and dark.
 | CV-004 | Excerpts of `.md` files render as formatted text | Done |
 | CV-005 | Chart colours are distinct and the header is emphasised | Done |
 | CV-006 | One header button toggles light and dark | Done |
+| CV-007 | Deep green dark theme, no header accent bar | Open |
 
 The [backlog](backlog.jsonld) owns ticket status and acceptance criteria.
 
