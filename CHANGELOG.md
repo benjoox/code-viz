@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Markdown excerpts render as formatted text with their file line numbers.
+
 ## 0.1.0
 
 First public release of code-viz with the `flow-map` skill.

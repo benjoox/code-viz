@@ -1,7 +1,7 @@
 # Flow-map build and browser boundaries
 
 Status: Current implementation
-Updated: 2026-10-05
+Updated: 2026-10-11
 
 ## Overview
 
@@ -29,6 +29,10 @@ flowchart LR
   excerpt length. Real-path containment is checked before reading source files.
 - Source excerpts are read at build time and common secret patterns are redacted.
   That pattern-based redaction is not a guarantee that all sensitive content is removed.
+- Excerpts of `.md` and `.markdown` files are parsed after redaction into a small block
+  list and embedded beside the lines. The builder overwrites any block list supplied in
+  `flow.json`. The template draws blocks from text nodes only, so excerpt text cannot
+  become markup. Only `http(s)` links stay links, and images show their alt text.
 - The template owns navigation, playback and the source/state/issue panel.
 - Excerpts are snapshots. After source changes, update the model's paths, ranges and
   explanation, then rebuild; an existing HTML file does not watch the repository.
@@ -51,6 +55,7 @@ future work; its session-routing behavior is not part of today's contract.
 | [SKILL.md](../../skills/flow-map/SKILL.md) | Trace, model, review and delivery workflow |
 | [build.mjs](../../skills/flow-map/scripts/build.mjs) | Reference validation, excerpt loading and HTML generation |
 | [validate.mjs](../../skills/flow-map/scripts/validate.mjs) | Model shape validation before file access |
+| [markdown.mjs](../../skills/flow-map/scripts/markdown.mjs) | Markdown excerpt lines to blocks, with link and image policy |
 | [template.html](../../skills/flow-map/assets/template.html) | Browser presentation and interaction |
 | [schema.md](../../skills/flow-map/references/schema.md) | Authoring contract |
 | [example.flow.json](../../skills/flow-map/assets/example.flow.json) | Runnable builder example |

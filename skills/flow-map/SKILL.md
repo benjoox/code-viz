@@ -39,6 +39,8 @@ Write `flow.json` following [the schema](references/schema.md).
 - Each step: one plain sentence (`say`), the active nodes and edges, the files it touches
   with `role` and a line range of 40 lines or fewer, and `state` values when something
   meaningful changes (status, counts, auth, cache hit).
+- For a Markdown file, start and end each range on a block boundary: a heading, or a whole
+  paragraph, list, table or fenced block. The page draws `.md` excerpts as formatted text.
 - A user flow follows what the person does and sees; a data flow follows one record from
   input to storage and back.
 

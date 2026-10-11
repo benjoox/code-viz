@@ -127,6 +127,27 @@ details[open] > summary::before { transform: rotate(90deg); }
 .code .l { display: grid; grid-template-columns: 3.6em minmax(0, 1fr); white-space: pre; }
 .code .l i { font-style: normal; color: var(--muted); text-align: right; padding-right: 10px; user-select: none; }
 .code .l.hl { background: color-mix(in srgb, var(--bug) 14%, transparent); }
+.md { display: grid; gap: 6px; padding: 8px 0; font-size: 0.86rem; line-height: 1.55; overflow-wrap: anywhere; }
+.md-row { display: grid; grid-template-columns: 2.9em minmax(0, 1fr); gap: 0 10px; padding-right: 10px; min-width: 0; }
+.md-row.hl { background: color-mix(in srgb, var(--bug) 14%, transparent); }
+.md-row > i { font: normal 0.7rem/1.9 var(--mono); color: var(--muted); text-align: right; user-select: none; }
+.md-h { font-weight: 700; line-height: 1.3; }
+.md-h1 { font-size: 1.15rem; } .md-h2 { font-size: 1.05rem; } .md-h3 { font-size: 0.98rem; } .md-h4 { font-size: 0.92rem; } .md-h5, .md-h6 { font-size: 0.86rem; }
+.md-p, .md-quote { margin: 0; }
+.md-quote { border-left: 3px solid var(--line); padding-left: 10px; color: var(--muted); }
+.md code { font: 0.9em var(--mono); background: var(--band); padding: 1px 5px; border-radius: 4px; }
+.md a { color: var(--accent); text-underline-offset: 2px; }
+.md-code { background: var(--band); border-radius: 6px; padding: 6px 10px; min-width: 0; }
+.md-code pre { margin: 0; font: 0.74rem/1.5 var(--mono); overflow-x: auto; }
+.md-lang { display: block; font: 600 0.62rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.md-li { display: grid; grid-template-columns: 1.7em minmax(0, 1fr); padding-left: calc(var(--d, 0) * 1.3em); }
+.md-li > b { font-weight: 600; color: var(--muted); }
+.md-scroll { overflow-x: auto; }
+.md-table { border-collapse: collapse; font-size: 0.82rem; }
+.md-table th, .md-table td { border: 1px solid var(--line); padding: 4px 8px; text-align: left; vertical-align: top; }
+.md-table th { background: var(--band); font-weight: 600; }
+.md-table code { white-space: nowrap; }
+.md-rule { border: 0; border-top: 1px solid var(--line); margin: 8px 0; }
 .issue { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 8px; padding: 8px; border: 1px solid var(--line); border-radius: 7px; background: var(--bg); cursor: pointer; text-align: left; width: 100%; }
 .issue svg { width: 18px; height: 18px; }
 .issue .t { font-weight: 600; font-size: 0.86rem; }
@@ -486,6 +507,58 @@ details[open] > summary::before { transform: rotate(90deg); }
     lines.forEach((t, k) => { const row = h('span', `l${hl === start + k ? ' hl' : ''}`); row.append(h('i', '', String(start + k)), document.createTextNode(t)); pre.appendChild(row); });
     return pre;
   }
+  // Markdown blocks are parsed by the builder; they are drawn here from text nodes only.
+  function inlineNodes(items, parent) {
+    for (const it of items) {
+      if (typeof it === 'string') parent.appendChild(document.createTextNode(it));
+      else if (it.code !== undefined) parent.appendChild(h('code', '', it.code));
+      else if (it.strong) parent.appendChild(inlineNodes(it.strong, h('strong')));
+      else if (it.em) parent.appendChild(inlineNodes(it.em, h('em')));
+      else { const a = inlineNodes(it.text, h('a')); a.href = it.href; a.target = '_blank'; a.rel = 'noopener noreferrer'; parent.appendChild(a); }
+    }
+    return parent;
+  }
+  function mdRow(line, end, hl, body) {
+    const row = h('div', `md-row${hl >= line && hl <= end ? ' hl' : ''}`);
+    const gutter = h('i', '', String(line));
+    if (end > line) gutter.title = `Lines ${line}-${end}`;
+    row.append(gutter, body);
+    return row;
+  }
+  function docView(blocks, hl) {
+    const box = h('div', 'md');
+    for (const b of blocks) {
+      if (b.type === 'list') {
+        for (const it of b.items) {
+          const li = h('div', 'md-li');
+          li.style.setProperty('--d', it.depth);
+          li.append(h('b', '', it.mark), inlineNodes(it.inline, h('span')));
+          box.appendChild(mdRow(it.line, it.end, hl, li));
+        }
+        continue;
+      }
+      let el;
+      if (b.type === 'heading') {
+        el = inlineNodes(b.inline, h('div', `md-h md-h${b.level}`));
+        el.setAttribute('role', 'heading'); el.setAttribute('aria-level', String(Math.min(b.level + 2, 6)));
+      } else if (b.type === 'code') {
+        el = h('div', 'md-code');
+        if (b.lang) el.appendChild(h('span', 'md-lang', b.lang));
+        el.appendChild(h('pre', '', b.lines.join('\n')));
+      } else if (b.type === 'table') {
+        const row = (cells, tag) => { const tr = h('tr'); for (const c of cells) tr.appendChild(inlineNodes(c, h(tag))); return tr; };
+        const t = h('table', 'md-table');
+        if (b.head) t.appendChild(h('thead')).appendChild(row(b.head, 'th'));
+        const body = t.appendChild(h('tbody'));
+        for (const r of b.rows) body.appendChild(row(r, 'td'));
+        el = h('div', 'md-scroll'); el.appendChild(t);
+      } else if (b.type === 'quote') el = inlineNodes(b.inline, h('blockquote', 'md-quote'));
+      else if (b.type === 'rule') el = h('hr', 'md-rule');
+      else el = inlineNodes(b.inline, h('p', 'md-p'));
+      box.appendChild(mdRow(b.line, b.end, hl, el));
+    }
+    return box;
+  }
   const collapsed = new Set();
   function fileCard(f, remember) {
     const [ic, col] = fileType(f.path);
@@ -498,7 +571,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     if (f.role) s.appendChild(h('span', `role ${f.role}`, f.role));
     d.appendChild(s);
     if (f.note) d.appendChild(h('p', 'note', f.note));
-    if (f.excerpt) d.appendChild(codeBlock(f.excerpt, f.lines[0], f.hl));
+    if (f.excerpt) d.appendChild(f.doc ? docView(f.doc, f.hl) : codeBlock(f.excerpt, f.lines[0], f.hl));
     if (remember) d.addEventListener('toggle', () => { d.open ? collapsed.delete(key) : collapsed.add(key); });
     return d;
   }
@@ -509,7 +582,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     body.append(h('div', 't', i.title), h('div', 'm', `${i.severity} · ${i.file}:${i.line}`));
     if (i.detail) body.appendChild(h('div', 'd', i.detail));
     if (i.fix) body.appendChild(h('div', 'fx', `Fix: ${i.fix}`));
-    if (i.excerpt) body.appendChild(codeBlock(i.excerpt, i.from, i.line));
+    if (i.excerpt) body.appendChild(i.doc ? docView(i.doc, i.line) : codeBlock(i.excerpt, i.from, i.line));
     b.appendChild(body);
     b.addEventListener('click', () => goToIssue(i));
     return b;
@@ -550,7 +623,7 @@ details[open] > summary::before { transform: rotate(90deg); }
     card.appendChild(h('div', 't', `${n.label} (${n.kind})`));
     if (n.note) card.appendChild(h('p', '', n.note));
     if (n.drill) { const b = h('button', '', `Open ${DATA.views[n.drill].title}`); b.addEventListener('click', () => drillInto(n.drill)); card.appendChild(b); }
-    if (n.file) card.appendChild(fileCard({ path: n.file, lines: n.lines, excerpt: n.excerpt }, false));
+    if (n.file) card.appendChild(fileCard({ path: n.file, lines: n.lines, excerpt: n.excerpt, doc: n.doc }, false));
     issuesFor(S.view, id, null).forEach(i => card.appendChild(issueCard(i)));
     $('selsec').open = true;
     if (!(jump && jumpTo(st => st.nodes.includes(id)))) apply();

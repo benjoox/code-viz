@@ -1,6 +1,6 @@
 # CV-004: Render Markdown excerpts as formatted text
 
-Status: Open
+Status: Done 2026-10-11
 Backlog: [CV-004](../../backlog.jsonld)
 Blocks: none
 

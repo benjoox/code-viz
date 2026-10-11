@@ -5,6 +5,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, realpathSync, mkdirS
 import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateShape } from './validate.mjs';
+import { isMarkdown, parseMarkdown } from './markdown.mjs';
 
 const USAGE = 'Usage: node build.mjs <flow.json> <out.html> [--root <repo-root>]';
 const MAX_EXCERPT = 40;
@@ -18,6 +19,8 @@ const SECRETS = [
   [/\b(?:sk|pk|rk)[-_][\w-]{16,}|\bgh[pousr]_\w{20,}|\bgithub_pat_\w{20,}|\bAIza[\w-]{30,}|\bxox[abprs]-[\w-]{10,}|\bAKIA[0-9A-Z]{16}\b|\beyJ[\w-]{8,}\.[\w-]{8,}\.[\w-]{8,}/g, '[redacted]'],
 ];
 const redact = line => SECRETS.reduce((l, [re, to]) => l.replace(re, to), line);
+/** Markdown excerpts also carry parsed blocks, read from the redacted lines, for the page to draw. */
+const doc = (path, lines, from) => lines && isMarkdown(path) ? parseMarkdown(lines, from) : undefined;
 
 const args = process.argv.slice(2);
 const rootIx = args.indexOf('--root');
@@ -99,6 +102,7 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
     if (n.drill && !Object.hasOwn(flow.views, n.drill)) fail(`${w}: drill target "${n.drill}" is not a view`);
     delete n.excerpt;
     if (n.file) n.excerpt = excerpt(w, n.file, n.lines);
+    n.doc = doc(n.file, n.excerpt, n.lines?.[0]);
   }
   const edges = new Set();
   for (const e of v.edges ?? []) {
@@ -120,6 +124,7 @@ for (const [vid, v] of Object.entries(flow.views ?? {})) {
       for (const f of st.files ?? []) {
         if (f.role && !ROLES.has(f.role)) fail(`${w}: unknown role "${f.role}"`);
         f.excerpt = excerpt(`${w} ${f.path}`, f.path, f.lines);
+        f.doc = doc(f.path, f.excerpt, f.lines?.[0]);
       }
     });
   }
@@ -141,6 +146,7 @@ for (const i of flow.issues) {
   if (!Number.isInteger(i.line) || i.line < 1 || i.line > all.length) { fail(`${w}: line ${i.line} is outside ${i.file}`); continue; }
   i.from = Math.max(1, i.line - 2);
   i.excerpt = all.slice(i.from - 1, Math.min(all.length, i.line + 2)).map(redact);
+  i.doc = doc(i.file, i.excerpt, i.from);
 }
 
 if (errors.length) {
