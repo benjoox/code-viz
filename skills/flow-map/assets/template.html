@@ -137,9 +137,8 @@ details[open] > summary::before { transform: rotate(90deg); }
 .md-quote { border-left: 3px solid var(--line); padding-left: 10px; color: var(--muted); }
 .md code { font: 0.9em var(--mono); background: var(--band); padding: 1px 5px; border-radius: 4px; }
 .md a { color: var(--accent); text-underline-offset: 2px; }
-.md-code { background: var(--band); border-radius: 6px; padding: 6px 10px; min-width: 0; }
-.md-code pre { margin: 0; font: 0.74rem/1.5 var(--mono); overflow-x: auto; }
-.md-lang { display: block; font: 600 0.62rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+.md-code { background: var(--band); border-radius: 6px; margin-right: 10px; min-width: 0; }
+.md-lang { display: block; font: 600 0.62rem var(--mono); letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); padding: 6px 10px 0; }
 .md-li { display: grid; grid-template-columns: 1.7em minmax(0, 1fr); padding-left: calc(var(--d, 0) * 1.3em); }
 .md-li > b { font-weight: 600; color: var(--muted); }
 .md-scroll { overflow-x: auto; }
@@ -538,14 +537,17 @@ details[open] > summary::before { transform: rotate(90deg); }
         }
         continue;
       }
+      if (b.type === 'code') {
+        const wrap = h('div', 'md-code');
+        if (b.lang) wrap.appendChild(h('span', 'md-lang', b.lang));
+        wrap.appendChild(codeBlock(b.lines, b.from, hl));
+        box.appendChild(wrap);
+        continue;
+      }
       let el;
       if (b.type === 'heading') {
         el = inlineNodes(b.inline, h('div', `md-h md-h${b.level}`));
         el.setAttribute('role', 'heading'); el.setAttribute('aria-level', String(Math.min(b.level + 2, 6)));
-      } else if (b.type === 'code') {
-        el = h('div', 'md-code');
-        if (b.lang) el.appendChild(h('span', 'md-lang', b.lang));
-        el.appendChild(h('pre', '', b.lines.join('\n')));
       } else if (b.type === 'table') {
         const row = (cells, tag) => { const tr = h('tr'); for (const c of cells) tr.appendChild(inlineNodes(c, h(tag))); return tr; };
         const t = h('table', 'md-table');

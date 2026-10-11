@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync, existsSync, statSync, realpathSync, mkdirS
 import { dirname, resolve, relative, isAbsolute, sep } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { validateShape } from './validate.mjs';
-import { isMarkdown, parseMarkdown } from './markdown.mjs';
+import { isMarkdown, openFence, parseMarkdown } from './markdown.mjs';
 
 const USAGE = 'Usage: node build.mjs <flow.json> <out.html> [--root <repo-root>]';
 const MAX_EXCERPT = 40;
@@ -19,8 +19,8 @@ const SECRETS = [
   [/\b(?:sk|pk|rk)[-_][\w-]{16,}|\bgh[pousr]_\w{20,}|\bgithub_pat_\w{20,}|\bAIza[\w-]{30,}|\bxox[abprs]-[\w-]{10,}|\bAKIA[0-9A-Z]{16}\b|\beyJ[\w-]{8,}\.[\w-]{8,}\.[\w-]{8,}/g, '[redacted]'],
 ];
 const redact = line => SECRETS.reduce((l, [re, to]) => l.replace(re, to), line);
-/** Markdown excerpts also carry parsed blocks, read from the redacted lines, for the page to draw. */
-const doc = (path, lines, from) => lines && isMarkdown(path) ? parseMarkdown(lines, from) : undefined;
+/** Markdown excerpts also carry parsed blocks, read from the redacted lines, for the page to draw. A range that starts inside a fenced block is read as code. */
+const doc = (path, lines, from) => lines && isMarkdown(path) ? parseMarkdown(lines, from, openFence(readLines(path), from - 1)) : undefined;
 
 const args = process.argv.slice(2);
 const rootIx = args.indexOf('--root');

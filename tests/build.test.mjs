@@ -122,6 +122,16 @@ test('parses Markdown excerpts into blocks and leaves other files as plain lines
   assert.equal(text.doc, undefined);
   assert.deepEqual(text.excerpt, ['line 1', 'line 2']);
 });
+test('reads a Markdown excerpt that starts inside a fenced block as code', t => {
+  const f = markdownFixture(t, '```js\nconst a = 1;\nconst b = 2;\n```\n');
+  f.flow.views.main.nodes[0].lines = [2, 3];
+  f.flow.views.main.scenarios[0].steps[0].files[0].lines = [2, 3];
+  f.flow.issues = [{ id: 'i', severity: 'risk', view: 'main', node: 'a', file: 'notes.md', line: 3, title: 'Risk', detail: 'Details', fix: 'Fix' }];
+  assert.equal(f.run().status, 0);
+  const { views: { main }, issues } = embedded(readFileSync(f.output, 'utf8'));
+  assert.deepEqual(main.nodes[0].doc.map(b => [b.type, b.from, b.lines]), [['code', 2, ['const a = 1;', 'const b = 2;']]]);
+  assert.deepEqual(issues[0].doc.map(b => [b.type, b.line, b.from]), [['code', 1, 2]]);
+});
 test('ignores supplied Markdown blocks', t => {
   const f = markdownFixture(t, '# Title\n\nSome text.\n');
   const forged = [{ type: 'paragraph', line: 1, end: 1, inline: [{ href: 'javascript:alert(1)', text: ['forged'] }] }];

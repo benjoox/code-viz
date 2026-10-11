@@ -13,6 +13,24 @@ const INLINE = /\\([\\`*_{}[\]()#+\-.!|>~])|(`+)([^`]|[^`][\s\S]*?[^`])\2(?!`)|\
 
 export const isMarkdown = path => /\.(?:md|markdown)$/i.test(path);
 
+const closer = marker => new RegExp(`^ {0,3}\\${marker[0]}{${marker.length},}\\s*$`);
+/** Index of the line that closes a fence at or after `i`, or rows.length when it never closes. */
+function fenceEnd(rows, i, marker) {
+  const close = closer(marker);
+  while (i < rows.length && !close.test(rows[i])) i++;
+  return i;
+}
+/** The fence marker still open before line index `upTo` of a whole file, or '' outside a fence. */
+export function openFence(lines, upTo) {
+  let marker = '';
+  for (let i = 0; i < upTo && i < lines.length; i++) {
+    const row = lines[i].replace(/\r$/, '');
+    if (marker) { if (closer(marker).test(row)) marker = ''; }
+    else marker = FENCE.exec(row)?.[1] ?? '';
+  }
+  return marker;
+}
+
 /** Inline items: a string, or { code }, { strong }, { em }, { href, text }. Only http(s) links stay links. */
 function inline(text) {
   const out = [];
@@ -38,15 +56,23 @@ const startsTable = (rows, i) => /^\s*\|/.test(rows[i])
 const startsBlock = (rows, i) => FENCE.test(rows[i]) || HEADING.test(rows[i]) || RULE.test(rows[i])
   || QUOTE.test(rows[i]) || ITEM.test(rows[i]) || startsTable(rows, i);
 
-/** Blocks carry the file lines they cover, so the page keeps its line numbers and issue highlight. */
-export function parseMarkdown(lines, first) {
+/**
+ * Blocks carry the file lines they cover, so the page keeps its line numbers and issue highlight.
+ * `open` is the fence marker still open where the excerpt starts (see openFence), if any.
+ */
+export function parseMarkdown(lines, first, open = '') {
   const rows = lines.map(l => l.replace(/\r$/, ''));
   const blocks = [];
   const at = i => first + i;
   let i = 0;
-  const frontMatterEnd = first === 1 && rows[0]?.trim() === '---' ? rows.findIndex((l, k) => k > 0 && l.trim() === '---') : -1;
+  if (open && rows.length) {
+    i = fenceEnd(rows, 0, open);
+    blocks.push({ type: 'code', lang: '', line: first, end: at(Math.min(i, rows.length - 1)), from: first, lines: rows.slice(0, i) });
+    i++;
+  }
+  const frontMatterEnd = !open && first === 1 && rows[0]?.trim() === '---' ? rows.findIndex((l, k) => k > 0 && l.trim() === '---') : -1;
   if (frontMatterEnd > 0) {
-    blocks.push({ type: 'code', lang: 'front matter', line: 1, end: frontMatterEnd + 1, lines: rows.slice(0, frontMatterEnd + 1) });
+    blocks.push({ type: 'code', lang: 'front matter', line: 1, end: frontMatterEnd + 1, from: 1, lines: rows.slice(0, frontMatterEnd + 1) });
     i = frontMatterEnd + 1;
   }
   while (i < rows.length) {
@@ -54,10 +80,9 @@ export function parseMarkdown(lines, first) {
     let m;
     if (!row.trim()) { i++; continue; }
     if ((m = FENCE.exec(row))) {
-      const start = i++;
-      const close = new RegExp(`^ {0,3}\\${m[1][0]}{${m[1].length},}\\s*$`);
-      while (i < rows.length && !close.test(rows[i])) i++;
-      blocks.push({ type: 'code', lang: m[2], line: at(start), end: at(Math.min(i, rows.length - 1)), lines: rows.slice(start + 1, i) });
+      const start = i;
+      i = fenceEnd(rows, i + 1, m[1]);
+      blocks.push({ type: 'code', lang: m[2], line: at(start), end: at(Math.min(i, rows.length - 1)), from: at(start + 1), lines: rows.slice(start + 1, i) });
       i++;
     } else if ((m = HEADING.exec(row))) {
       blocks.push({ type: 'heading', level: m[1].length, line: at(i), end: at(i), inline: inline(m[2]) });

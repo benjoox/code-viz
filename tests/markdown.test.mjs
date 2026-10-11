@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { isMarkdown, parseMarkdown } from '../skills/flow-map/scripts/markdown.mjs';
+import { isMarkdown, openFence, parseMarkdown } from '../skills/flow-map/scripts/markdown.mjs';
 
 const kinds = blocks => blocks.map(b => b.type);
 
@@ -75,10 +75,10 @@ test('reads a table that starts below its header', () => {
 
 test('reads fenced code and runs an unclosed fence to the end of the excerpt', () => {
   const closed = parseMarkdown(['```mermaid', 'flowchart LR', '  A --> B', '```', 'after'], 1);
-  assert.deepEqual(closed[0], { type: 'code', lang: 'mermaid', line: 1, end: 4, lines: ['flowchart LR', '  A --> B'] });
+  assert.deepEqual(closed[0], { type: 'code', lang: 'mermaid', line: 1, end: 4, from: 2, lines: ['flowchart LR', '  A --> B'] });
   assert.equal(closed[1].type, 'paragraph');
   const open = parseMarkdown(['~~~', 'still code', '# not a heading'], 7);
-  assert.deepEqual(open, [{ type: 'code', lang: '', line: 7, end: 9, lines: ['still code', '# not a heading'] }]);
+  assert.deepEqual(open, [{ type: 'code', lang: '', line: 7, end: 9, from: 8, lines: ['still code', '# not a heading'] }]);
 });
 
 test('reads front matter only at the first line of a file', () => {
@@ -98,4 +98,25 @@ test('reads block quotes and ignores Windows line endings', () => {
 test('returns no blocks for an empty or blank excerpt', () => {
   assert.deepEqual(parseMarkdown([], 1), []);
   assert.deepEqual(parseMarkdown(['', '   '], 1), []);
+});
+
+test('finds the fence that is still open before an excerpt', () => {
+  const file = ['intro', '```bash', 'node -e "1"', 'echo hi', '```', 'after', '~~~~', 'tilde', '~~~', 'still open'];
+  assert.equal(openFence(file, 0), '');
+  assert.equal(openFence(file, 2), '```');
+  assert.equal(openFence(file, 4), '```');
+  assert.equal(openFence(file, 5), '');
+  assert.equal(openFence(file, 8), '~~~~');
+  assert.equal(openFence(file, 9), '~~~~');
+});
+
+test('reads an excerpt that starts inside a fence as code, not prose', () => {
+  const blocks = parseMarkdown(['const a = 1;', 'const b = 2;', '```', '', 'Back to prose.'], 98, '```');
+  assert.deepEqual(blocks[0], { type: 'code', lang: '', line: 98, end: 100, from: 98, lines: ['const a = 1;', 'const b = 2;'] });
+  assert.deepEqual(blocks[1], { type: 'paragraph', line: 102, end: 102, inline: ['Back to prose.'] });
+});
+
+test('an excerpt wholly inside a fence is one code block with every line', () => {
+  const blocks = parseMarkdown(['# looks like a heading', '| a | b |'], 40, '```');
+  assert.deepEqual(blocks, [{ type: 'code', lang: '', line: 40, end: 41, from: 40, lines: ['# looks like a heading', '| a | b |'] }]);
 });
