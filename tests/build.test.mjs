@@ -42,6 +42,12 @@ test('build creates a standalone page with actual excerpts', t => {
   assert.match(html, /line 1/); assert.match(html, /<svg/);
   assert.doesNotMatch(html, /__FLOW_DATA__|__SPRITE__|__TITLE__|fonts.googleapis|fonts.gstatic/);
 });
+test('page carries one theme toggle and both of its icons', t => {
+  const f = fixture(t); assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.equal(html.match(/id="theme"/g).length, 1);
+  assert.match(html, /<symbol id="i-sun"/); assert.match(html, /<symbol id="i-moon"/);
+});
 for (const [name, change, pattern] of [
   ['unknown node', f => f.flow.views.main.scenarios[0].steps[0].nodes.push('missing'), /unknown node/],
   ['unknown edge', f => f.flow.views.main.scenarios[0].steps[0].edges = ['missing'], /unknown edge/],
@@ -101,6 +107,83 @@ test('ignores supplied excerpts and escapes HTML/script terminators', t => {
   assert.doesNotMatch(html, /fabricated-excerpt|<script>alert/);
   assert.match(html, /\\u003c\/script>/); assert.match(html, /\$& \$'/);
 });
+const embedded = html => JSON.parse(JSON.parse(html.match(/const DATA = JSON\.parse\((".*")\);/)[1]));
+function markdownFixture(t, text) {
+  const f = fixture(t);
+  writeFileSync(join(f.root, 'notes.md'), text);
+  f.flow.views.main.nodes[0].file = 'notes.md';
+  f.flow.views.main.nodes[0].lines = [1, 3];
+  f.flow.views.main.scenarios[0].steps[0].files = [{ path: 'notes.md', lines: [1, 3] }, { path: 'source.txt', lines: [1, 2] }];
+  return f;
+}
+test('parses Markdown excerpts into blocks and leaves other files as plain lines', t => {
+  const f = markdownFixture(t, '# Title\n\nSome `code` here.\n');
+  f.flow.issues = [{ id: 'i', severity: 'risk', view: 'main', node: 'a', file: 'notes.md', line: 3, title: 'Risk', detail: 'Details', fix: 'Fix' }];
+  assert.equal(f.run().status, 0);
+  const { views: { main }, issues } = embedded(readFileSync(f.output, 'utf8'));
+  const [markdown, text] = main.scenarios[0].steps[0].files;
+  assert.deepEqual(main.nodes[0].doc.map(b => b.type), ['heading', 'paragraph']);
+  assert.deepEqual(markdown.doc.map(b => [b.type, b.line]), [['heading', 1], ['paragraph', 3]]);
+  assert.deepEqual(issues[0].doc.map(b => b.type), ['heading', 'paragraph']);
+  assert.equal(text.doc, undefined);
+  assert.deepEqual(text.excerpt, ['line 1', 'line 2']);
+});
+test('reads a Markdown excerpt that starts inside a fenced block as code', t => {
+  const f = markdownFixture(t, '```js\nconst a = 1;\nconst b = 2;\n```\n');
+  f.flow.views.main.nodes[0].lines = [2, 3];
+  f.flow.views.main.scenarios[0].steps[0].files[0].lines = [2, 3];
+  f.flow.issues = [{ id: 'i', severity: 'risk', view: 'main', node: 'a', file: 'notes.md', line: 3, title: 'Risk', detail: 'Details', fix: 'Fix' }];
+  assert.equal(f.run().status, 0);
+  const { views: { main }, issues } = embedded(readFileSync(f.output, 'utf8'));
+  assert.deepEqual(main.nodes[0].doc.map(b => [b.type, b.from, b.lines]), [['code', 2, ['const a = 1;', 'const b = 2;']]]);
+  assert.deepEqual(issues[0].doc.map(b => [b.type, b.line, b.from]), [['code', 1, 2]]);
+});
+test('ignores supplied Markdown blocks', t => {
+  const f = markdownFixture(t, '# Title\n\nSome text.\n');
+  const forged = [{ type: 'paragraph', line: 1, end: 1, inline: [{ href: 'javascript:alert(1)', text: ['forged'] }] }];
+  f.flow.views.main.nodes[0].doc = forged;
+  f.flow.views.main.scenarios[0].steps[0].files[0].doc = forged;
+  f.flow.views.main.scenarios[0].steps[0].files[1].doc = forged;
+  assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.doesNotMatch(html, /forged|javascript:/);
+  const { views: { main } } = embedded(html);
+  const [markdown, text] = main.scenarios[0].steps[0].files;
+  assert.equal(main.nodes[0].doc[0].type, 'heading');
+  assert.equal(markdown.doc[0].type, 'heading');
+  assert.equal(text.doc, undefined);
+});
+test('redacts secrets before parsing Markdown', t => {
+  const credential = 'synthetic' + 'Credential123456';
+  // The code span splits the value from its key, so only line-level redaction before parsing catches it.
+  const f = markdownFixture(t, `password: \`${credential}\`\n\nAuthorization: Bearer ${credential}\n`);
+  assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.doesNotMatch(html, new RegExp(credential)); assert.match(html, /\[redacted\]/);
+});
+test('parses node and file notes as Markdown and drops the raw text', t => {
+  const f = fixture(t);
+  f.flow.views.main.nodes[0].note = '## Heading\n\n| a | b |\n|---|---|\n| `x` | y |';
+  f.flow.views.main.scenarios[0].steps[0].files[0].note = 'See **this** `file`.';
+  assert.equal(f.run().status, 0);
+  const { views: { main } } = embedded(readFileSync(f.output, 'utf8'));
+  const [node] = main.nodes, [file] = main.scenarios[0].steps[0].files;
+  assert.deepEqual(node.noteDoc.map(b => b.type), ['heading', 'table']);
+  assert.equal(node.note, undefined);
+  assert.deepEqual(file.noteDoc[0].inline, ['See ', { strong: ['this'] }, ' ', { code: 'file' }, '.']);
+  assert.equal(file.note, undefined);
+});
+test('ignores a supplied noteDoc and redacts notes before parsing', t => {
+  const credential = 'synthetic' + 'Credential123456';
+  const f = fixture(t);
+  f.flow.views.main.nodes[0].noteDoc = [{ type: 'paragraph', line: 1, end: 1, inline: [{ href: 'javascript:alert(1)', text: ['forged'] }] }];
+  f.flow.views.main.scenarios[0].steps[0].files[0].note = `password: \`${credential}\``;
+  assert.equal(f.run().status, 0);
+  const html = readFileSync(f.output, 'utf8');
+  assert.doesNotMatch(html, new RegExp(`forged|javascript:|${credential}`)); assert.match(html, /\[redacted\]/);
+});
+test('rejects a note that is not a string', t => reject(t, f => { f.flow.views.main.nodes[0].note = { text: 'x' }; }, /note: expected a string/));
+test('rejects a file note that is not a string', t => reject(t, f => { f.flow.views.main.scenarios[0].steps[0].files[0].note = 3; }, /note: expected a string/));
 test('usage rejects stray arguments', t => {
   const f = fixture(t); assert.equal(f.run(f.flow, ['extra']).status, 2);
 });

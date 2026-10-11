@@ -1,6 +1,6 @@
 # Roadmap
 
-Updated: 2026-10-03
+Updated: 2026-10-11
 
 ## Available
 
@@ -8,6 +8,20 @@ Flow-map traces source into an interactive HTML snapshot with layered nodes, pla
 steps, source excerpts and pinned issues. Its builder validates references, confines
 excerpts to the project root and redacts common secret patterns. See
 [the current architecture](architecture/flow-map-build.md).
+
+## Viewer readability
+
+Mapped Markdown should read as Markdown, and the chart and header should be legible
+at a glance in light and dark.
+
+| Ticket | Outcome | State |
+| --- | --- | --- |
+| CV-004 | Excerpts of `.md` files render as formatted text | Done |
+| CV-005 | Chart colours are distinct and the header is emphasised | Done |
+| CV-006 | One header button toggles light and dark | Done |
+| CV-007 | Deep green dark theme, no header accent bar | Done |
+
+The [backlog](backlog.jsonld) owns ticket status and acceptance criteria.
 
 ## Next: ask questions inside the map
 

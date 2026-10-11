@@ -2,6 +2,8 @@
 
 The build rejects unknown kinds, severities, roles and ids, missing files, line ranges
 outside a file and excerpts over 40 lines. Paths are relative to `--root` and must stay inside it.
+A `note` is one or two sentences of Markdown in your own words. Source text belongs in `file` and
+`lines`, which the build reads from disk, so never paste it into a note.
 
 ```jsonc
 {
@@ -69,5 +71,12 @@ outside a file and excerpts over 40 lines. Paths are relative to `--root` and mu
 | `severity` | `bug` (wrong behavior you can show), `risk` (breaks under a reachable condition), `smell` (works, costs later), `question` (could not verify; say what would settle it) |
 | scenario `kind` | `user`, `data`, `system`, `failure` |
 
+The page colours kinds by family and tells kinds apart inside a family by icon: people and
+surfaces (`user`, `ui`, `page`, `component`, `hook`), server interface (`api`, `route`, `auth`),
+logic (`service`, `function`, `state`), async (`job`, `event`, `queue`), `ai`, `external`, data
+(`db`, `table`, `cache`, `bucket`, `search`, `vector`) and documents (`file`, `doc`, `folder`).
+Severity colours are reserved for issues.
+
 Files are colour-coded by extension on the page: code, doc, data, media, slides, config
-and folders (a path ending in `/`).
+and folders (a path ending in `/`). Excerpts of `.md` files are drawn as formatted Markdown
+with their file line numbers; other files stay numbered code.

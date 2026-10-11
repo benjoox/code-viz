@@ -28,6 +28,10 @@ usage instructions remain in `skills/flow-map/`; link to them instead of copying
 - [CV-001: verify transport and thread access](planning/tasks/001-codex-connection-spike.md).
 - [CV-002: dedicated map conversation](planning/tasks/002-contextual-codex-questions.md).
 - [CV-003: existing-thread routing](planning/tasks/003-existing-thread-routing.md).
+- [CV-004: Markdown excerpts as formatted text](planning/tasks/004-markdown-excerpts.md).
+- [CV-005: chart colours and page header](planning/tasks/005-chart-colour-and-header.md).
+- [CV-006: light and dark theme toggle](planning/tasks/006-theme-toggle.md).
+- [CV-007: deep green dark theme](planning/tasks/007-green-dark-theme.md).
 
 ## Backlog contract
 
